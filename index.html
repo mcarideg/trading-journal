@@ -5170,7 +5170,7 @@ async function checkWeeklyNotification() {
   if (!('Notification' in window)) return;
   const send = async () => {
     const title = 'Trade Log · Revisión semanal 📋';
-    const options = { body: `${total-checked} puntos pendientes de revisar.`, icon: '/trading-journal/icon-192.png', badge: '/trading-journal/icon-192.png' };
+    const options = { body: `${total-checked} puntos pendientes de revisar.`, icon: 'icon-192.png', badge: 'icon-192.png' };
     try {
       // Required path for installed PWAs on Android/Chrome — new Notification()
       // alone fails silently there.
