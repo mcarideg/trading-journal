@@ -12,7 +12,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Trading Journal">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,800;1,600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #0a0a0a;
@@ -44,10 +44,18 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* Ocultar barras de scroll (el desplazamiento sigue funcionando) */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { width: 0; height: 0; display: none; }
+/* Transición base para elementos interactivos que no la definan (las reglas específicas posteriores prevalecen) */
+button, a, input, select, textarea, summary, [role="button"], [onclick], .clickable, .btn, .tv-btn, .tv-img, .pill, .tab, .nav-item, .checklist-item, .mset-row, .dm-row, .tv-cl-item, .tv-mpill, .cal-day {
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease, opacity .18s ease, transform .12s ease;
+}
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.5; overflow: hidden; -webkit-font-smoothing: antialiased; }
 
 /* Mobile base */
-.mobile-nav { display: flex; position: fixed; bottom: 10px; left: 16px; right: 16px; height: 60px; align-items: center; justify-content: space-between; padding: 0 12px; background: rgba(22,22,28,0.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; box-shadow: 0 14px 38px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,.04); z-index: 100; }
+.mobile-nav { display: flex; position: fixed; bottom: 10px; left: 16px; right: 16px; height: 60px; align-items: center; justify-content: space-between; padding: 0 12px; background: rgba(22,22,28,0.82); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; box-shadow: 0 14px 38px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,.04); z-index: 100; transition: height .3s cubic-bezier(.4,0,.2,1), padding .3s cubic-bezier(.4,0,.2,1), bottom .3s cubic-bezier(.4,0,.2,1), border-radius .3s ease; }
+.mn-label { transition: opacity .22s ease, max-height .26s ease, margin-top .26s ease; max-height: 14px; }
 .mobile-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 2px; cursor: pointer; color: var(--muted2); font-size: 8px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .04em; border: none; background: none; transform: translateY(3px); transition: color .18s, transform .28s cubic-bezier(.34,1.56,.64,1); }
 .mobile-nav-item.active { color: var(--accent2); transform: translateY(-1px); }
 .mobile-nav-item .mn-icon { display: flex; }
@@ -58,6 +66,17 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .mobile-nav-plus svg { width: 24px; height: 24px; }
 .mobile-nav-plus:active { transform: scale(0.95); }
 .mobile-nav-item, .mobile-nav-plus { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+/* Estado compacto: al bajar en móvil, oculta nombres y encoge la barra */
+.mobile-nav.compact { height: 50px; bottom: 12px; border-radius: 25px; }
+.mobile-nav.compact .mn-label { opacity: 0; max-height: 0; margin-top: -2px; }
+.mobile-nav.compact .mobile-nav-item { gap: 0; transform: translateY(0); }
+.mobile-nav.compact .mobile-nav-item.active { transform: translateY(0); }
+.mobile-nav.compact .mn-icon svg { width: 20px; height: 20px; }
+.mobile-nav.compact .mobile-nav-plus { width: 44px; height: 44px; }
+.mobile-nav.compact .mobile-nav-plus svg { width: 21px; height: 21px; }
+.mobile-nav.compact .mobile-nav-item.active .mn-dot { opacity: 0; transform: scale(0); }
+.mn-icon svg, .mobile-nav-plus svg { transition: width .26s ease, height .26s ease; }
+.mobile-nav-plus { transition: transform .12s, width .28s cubic-bezier(.4,0,.2,1), height .28s cubic-bezier(.4,0,.2,1); }
 .mobile-nav-item:focus, .mobile-nav-plus:focus, .mobile-nav-item:focus-visible, .mobile-nav-plus:focus-visible { outline: none; background: none; }
 .mn-more-icon { transition: transform .2s; }
 .mobile-more-menu { display: none; position: fixed; inset: 0; z-index: 101; }
@@ -84,7 +103,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .logo-sub { font-size: 10px; color: var(--muted); font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; font-family: var(--sans); }
 
 .nav { padding: 16px 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 4px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 400; transition: all 0.15s; border: none; background: none; width: calc(100% - 16px); margin: 0 8px; text-align: left; box-sizing: border-box; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 7px 12px; border-radius: 4px; cursor: pointer; color: var(--muted); font-size: 13px; font-weight: 400; transition: all 0.2s ease; border: none; background: none; width: calc(100% - 16px); margin: 0 8px; text-align: left; box-sizing: border-box; }
 .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); border-radius: 6px; }
 .nav-item.active { background: rgba(130,30,240,0.28); color: #e2d9f3; font-weight: 500; border-radius: 6px; border-left: 2px solid #bf5eff; padding-left: 10px; }
 .nav-item.active .nav-icon { color: #c084fc; }
@@ -99,7 +118,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 /* ── Main ── */
 .main { display: flex; flex-direction: column; overflow: hidden; position: relative; }
 #voice-canvas { position:absolute; inset:0; width:100%; height:100%; z-index:0; display:none; cursor:pointer; }
-body.voice-active #voice-canvas { display:block; }
+body.voice-active #voice-canvas { display:block; animation: pageFadeIn .45s ease; }
 
 /* ── Modo inmersivo: UP ocupa toda la pantalla ── */
 .app { transition: grid-template-columns .35s cubic-bezier(.4,0,.2,1); }
@@ -128,12 +147,16 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 /* ── Pages ── */
 .page { display: none; }
 #page-calendar.active { display: flex; flex-direction: column; height: 100%; min-height: calc(100vh - 130px); padding-bottom: 24px; }
-.page.active { display: block; }
+.page.active { display: block; animation: pageFadeIn .3s ease; }
+@keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* ── Buttons ── */
-.btn { padding: 8px 18px; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn { padding: 8px 18px; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s ease; }
+.btn-primary { background: rgba(139,47,248,.14); color: #c98bff; border: 1px solid rgba(139,47,248,.35); }
+.btn-primary:hover { background: rgba(139,47,248,.22); border-color: rgba(139,47,248,.5); color: #d9b8ff; transform: translateY(-1px); }
+/* Variante sólida (igual que "Guardar operación" en móvil) */
+.btn-primary.btn-solid { background: linear-gradient(150deg, var(--accent2), var(--accent)); color: #fff; border: 1px solid transparent; box-shadow: 0 6px 18px rgba(139,47,248,.4); }
+.btn-primary.btn-solid:hover { background: linear-gradient(150deg, var(--accent2), var(--accent)); border-color: transparent; color: #fff; transform: translateY(-1px); box-shadow: 0 8px 22px rgba(139,47,248,.5); }
 .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
 .btn-ghost:hover { background: var(--bg3); color: var(--text); }
 .btn-danger { background: var(--red-bg); color: var(--red); border: 1px solid transparent; font-size: 12px; padding: 5px 12px; }
@@ -264,6 +287,33 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .cal-cell.has-data:hover { border-color: var(--border2); }
 .cal-day-trade { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #141414; border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius); padding: 10px 14px; cursor: pointer; transition: border-color .15s; flex-wrap: wrap; }
 .cal-day-trade:hover { border-color: var(--border2); }
+/* ── Preview de operación (día) rediseñada ── */
+#day-modal .modal-box{border-radius:16px;animation:mkIn .22s ease;}
+.dm-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.dm-kicker svg{width:14px;height:14px;color:var(--muted);flex-shrink:0;}
+.dm-pnl{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1;}
+.dm-pnl.pos{color:var(--green);} .dm-pnl.neg{color:var(--red);} .dm-pnl.flat{color:var(--muted);font-size:16px;}
+.dm-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:6px;}
+.dm-accent{height:1px;margin:14px 0;}
+.dm-accent.pos{background:linear-gradient(90deg,rgba(0,201,111,.7),transparent);}
+.dm-accent.neg{background:linear-gradient(90deg,rgba(224,82,82,.7),transparent);}
+.dm-accent.flat{background:linear-gradient(90deg,rgba(160,90,255,.6),transparent);}
+.dm-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:11px;padding:11px 13px 11px 15px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s;flex-wrap:nowrap;}
+.dm-row:hover{border-color:var(--border2);}
+.dm-row::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+.dm-row.win::before{background:var(--green);} .dm-row.loss::before{background:var(--red);} .dm-row.be::before{background:var(--muted2);}
+.dm-l{display:flex;align-items:center;gap:9px;flex-wrap:nowrap;flex-shrink:0;white-space:nowrap;}
+.dm-r{display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0;justify-content:flex-end;}
+.dm-pair{font-family:var(--mono);font-weight:700;font-size:13px;}
+.dm-dir{font-size:11px;font-weight:600;white-space:nowrap;}
+.dm-dir.long{color:var(--green);} .dm-dir.short{color:var(--red);}
+.dm-pill{font-family:var(--sans);font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px;}
+.dm-pill.win{color:var(--green);background:rgba(0,201,111,.12);}
+.dm-pill.loss{color:var(--red);background:rgba(224,82,82,.12);}
+.dm-pill.be{color:var(--muted);background:rgba(255,255,255,.06);}
+.dm-strat{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.dm-rpnl{font-family:var(--mono);font-weight:700;font-size:13px;flex-shrink:0;white-space:nowrap;}
+.dm-rpnl.pos{color:var(--green);} .dm-rpnl.neg{color:var(--red);}
 .cal-cell.pos { background: rgba(0,201,111,0.06); border-color: rgba(0,201,111,0.25); }
 .cal-cell.neg { background: rgba(224,82,82,0.06); border-color: rgba(224,82,82,0.25); }
 .cal-cell.today .cal-daynum { color: var(--accent2); font-weight: 700; }
@@ -390,9 +440,10 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .strat-pnl.pos { color:#00c96f; }
 .strat-pnl.neg { color:#e05252; }
 .strat-empty { font-size:12px; color:var(--muted2); padding:12px 0; }
-.det-glossary-toggle { display:flex; align-items:center; gap:8px; width:100%; margin-top:28px; padding:13px 0; background:none; border:none; border-top:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; transition:color .15s; }
+.det-glossary-toggle { display:flex; align-items:center; gap:8px; width:100%; margin-top:28px; padding:13px 0; background:none; border:none; border-top:1px solid var(--border); color:var(--muted); font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; transition:color .15s; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
 .det-glossary-toggle:hover { color:var(--text); }
-.det-glossary-toggle .cw { margin-left:auto; transition:transform .25s; font-size:8px; }
+.det-glossary-toggle .cw { margin-left:auto; transition:transform .25s; font-size:8px; pointer-events:none; }
+@media (max-width:768px){ .det-glossary-toggle { padding:18px 0; } }
 .det-glossary { padding:16px 0 4px; }
 @media (max-width:760px){ .perf-grid { grid-template-columns:repeat(2,1fr); } .perf-cell:nth-child(4n){border-right:1px solid var(--border);} .perf-cell:nth-child(2n){border-right:none;} .perf-cell:nth-last-child(-n+2){border-bottom:none;} .perf-cell:nth-last-child(-n+4):not(:nth-last-child(-n+2)){border-bottom:1px solid var(--border);} .act-grid { grid-template-columns:repeat(2,1fr); } .act-grid .perf-cell{border-bottom:1px solid var(--border);} .act-grid .perf-cell:nth-child(2n){border-right:none;} .act-grid .perf-cell:nth-child(5n){border-right:1px solid var(--border);} .act-grid .perf-cell:last-child{border-bottom:none;} .strat-row{grid-template-columns:1fr auto;gap:10px 14px;} .strat-bar-wrap{grid-column:1/-1;order:3;} }
 .zella-wrap { display: flex; align-items: center; justify-content: center; gap: 52px; flex: 1; padding: 0; }
@@ -433,36 +484,38 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .trades-table tr.row-unreviewed.row-loss td:first-child { }
 .trades-table td { cursor: default; user-select: none; }
 /* ── Weekly Review banner ── */
-.wr-banner { background: transparent; border: none; border-bottom: 1px solid var(--border);
-  border-radius: 0; padding: 0 0 13px; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
-.wr-banner-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
-.wr-banner-text { flex: 1; min-width: 0; font-size: 12px; color: var(--muted); }
-.wr-banner-btn { background: transparent; color: var(--amber); border: none; padding: 0;
-  font-family: var(--mono); font-size: 10px; letter-spacing: .09em; text-transform: uppercase;
-  cursor: pointer; flex-shrink: 0; transition: color .15s; }
-.wr-banner-btn:hover { color: var(--text); }
-.wr-banner-close { background: transparent; border: none; color: var(--muted2); cursor: pointer; font-size: 14px; padding: 4px; flex-shrink: 0; }
+.wr-banner { display: flex; align-items: center; gap: 13px; background: rgba(245,166,35,.05); border: 1px solid rgba(245,166,35,.22); border-radius: 11px; padding: 12px 14px; margin-bottom: 18px; }
+.wr-banner-ic { color: var(--amber); flex-shrink: 0; display: flex; }
+.wr-banner-ic svg { width: 19px; height: 19px; }
+.wr-banner-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wr-banner-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.wr-banner-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; }
+.wr-banner-btn { font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--amber); background: rgba(245,166,35,.10); border: 1px solid rgba(245,166,35,.4); border-radius: 7px; padding: 7px 14px; cursor: pointer; flex-shrink: 0; transition: background .15s; }
+.wr-banner-btn:hover { background: rgba(245,166,35,.18); }
+.wr-banner-close { background: transparent; border: none; color: var(--muted2); cursor: pointer; font-size: 15px; padding: 2px 4px; flex-shrink: 0; transition: color .15s; }
 .wr-banner-close:hover { color: var(--text); }
 /* ── Weekly Review modal (opens from banner) ── */
-.wr-modal-box { background: #0d0d0d; border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 0; width: 480px; max-height: 82vh; overflow: hidden; display: flex; flex-direction: column; }
-.wr-modal-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.wr-modal-title { font-family: var(--mono); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.wr-modal-box { background: #0d0d0d; border: 1px solid var(--border2); border-radius: 16px; padding: 0; width: 480px; max-height: 82vh; overflow: hidden; display: flex; flex-direction: column; animation: mkIn .22s ease; }
+.wr-modal-header { padding: 18px 20px 12px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.wr-modal-accent { height: 1px; background: linear-gradient(90deg, rgba(245,166,35,.7), transparent); margin: 0 20px; flex-shrink: 0; }
+.wr-modal-title { font-family: var(--mono); font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 9px; }
+.wr-modal-title svg { width: 16px; height: 16px; color: #f5a623; flex-shrink: 0; }
 .wr-modal-body { flex: 1; overflow-y: auto; padding: 8px 0; }
 .wr-modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
 .wr-progress-label { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--muted); }
 .wr-progress-bar { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
-.wr-progress-fill { height: 100%; background: linear-gradient(90deg, #5b4dd4, #00b870); border-radius: 2px; transition: width .4s; }
-.wr-edit-btn { width: 100%; padding: 7px; background: transparent; border: 1px solid var(--border2); border-radius: var(--radius); color: var(--muted); font-size: 12px; font-family: var(--mono); cursor: pointer; letter-spacing: .04em; }
-.wr-edit-btn:hover { background: var(--bg3); color: var(--text); }
+.wr-progress-fill { height: 100%; background: linear-gradient(90deg, #f5a623, #00c96f); border-radius: 2px; transition: width .4s; }
+.wr-edit-btn { width: 100%; padding: 9px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 9px; color: var(--muted); font-size: 12px; font-family: var(--mono); cursor: pointer; letter-spacing: .04em; }
+.wr-edit-btn:hover { background: rgba(255,255,255,0.06); color: var(--text); }
 .wr-category { margin-bottom: 4px; }
 .wr-cat-header { padding: 8px 20px; }
-.wr-cat-name { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
-.wr-note { display: flex; align-items: flex-start; gap: 10px; padding: 8px 20px; cursor: pointer; transition: background .1s; border-bottom: 1px solid var(--border); }
+.wr-cat-name { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: #f5a623; }
+.wr-note { display: flex; align-items: flex-start; gap: 11px; padding: 9px 20px; cursor: pointer; transition: background .1s; }
 .wr-note:last-child { border-bottom: none; }
 .wr-note:hover { background: rgba(255,255,255,0.03); }
-.wr-note-check { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--muted2); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
-.wr-note-check.on { background: var(--accent); border-color: var(--accent); }
-.wr-note-check.on::after { content: ''; width: 4px; height: 7px; border: 1.5px solid #fff; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
+.wr-note-check { width: 17px; height: 17px; border-radius: 5px; border: 1.5px solid var(--muted2); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.wr-note-check.on { background: #00c96f; border-color: #00c96f; }
+.wr-note-check.on::after { content: ''; width: 4px; height: 8px; border: 1.5px solid #06210f; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
 .wr-note-text { font-size: 12px; color: var(--text); line-height: 1.5; flex: 1; }
 .wr-note-text.on { text-decoration: line-through; color: var(--muted); }
 /* ── Weekly Review edit modal ── */
@@ -477,17 +530,31 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .wr-del-btn:hover { color: var(--red); }
 .wr-cat-input-row { display: flex; gap: 6px; }
 .wr-cat-input-row input { flex: 1; background: #1a1a1a; border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--sans); outline: none; }
+/* ── Modal notas semanales rediseñado ── */
+.wr-edit-modal-box{border-radius:16px;animation:mkIn .22s ease;}
+.wr-edit-accent{height:1px;background:linear-gradient(90deg,rgba(245,166,35,.7),transparent);margin:-4px 0 18px;}
+.wr-edit-title-icon{width:16px;height:16px;color:#f5a623;flex:0 0 auto;}
+.wr-edit-modal-box .wr-edit-cat{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:14px 14px 12px;margin-bottom:12px;position:relative;overflow:hidden;}
+.wr-edit-modal-box .wr-edit-cat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#f5a623;opacity:.55;}
+.wr-edit-modal-box .wr-edit-cat-header{padding-left:4px;margin-bottom:10px;}
+.wr-edit-modal-box .wr-edit-cat-name{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#f5a623;font-weight:700;}
+.wr-edit-modal-box .wr-edit-note-item{background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:9px;padding:9px 11px;margin-bottom:6px;line-height:1.45;align-items:flex-start;}
+.wr-edit-modal-box .wr-note-input-row{margin-top:9px;}
+.wr-edit-modal-box .wr-note-input-row input,.wr-edit-modal-box .wr-cat-input-row input{background:#16161c;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:13px;}
+.wr-edit-modal-box .wr-del-btn{width:22px;height:22px;border-radius:6px;}
+.wr-edit-modal-box .wr-del-btn:hover{background:rgba(224,82,82,.1);}
 @media (max-width: 700px) { .wr-modal-box, .wr-edit-modal-box { width: 92vw; } }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .section-label { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
 
 /* ── Dashboard tabs ── */
-.dash-tabs { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: 10px; }
-.dash-tab { padding: 5px 12px; font-family: var(--mono); font-size: 11px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all .15s; }
-.dash-tab.active { color: var(--accent2); border-color: rgba(139,47,248,0.5); background: rgba(139,47,248,0.10); }
+.dash-tabs { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+.dash-seg { display: inline-flex; background: #17171c; border: 1px solid var(--border); border-radius: 10px; padding: 3px; gap: 2px; }
+.dash-tab { padding: 7px 18px; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--muted); background: transparent; border: none; border-radius: 7px; cursor: pointer; transition: all .18s; }
+.dash-tab.active { color: #c98bff; background: rgba(139,47,248,.16); }
 .dash-tab:hover:not(.active) { color: var(--text); }
 .dash-tab-content { display: none; }
-.dash-tab-content.active { display: block; }
+.dash-tab-content.active { display: block; animation: pageFadeIn .25s ease; }
 #dash-tab-resumen.active { display: block; }
 
 /* ── Settings page ── */
@@ -687,7 +754,7 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 
 /* ── Detail modal ── */
 .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
-.modal-overlay.open { display: flex; }
+.modal-overlay.open { display: flex; animation: ovFade .2s ease; }
 .modal-box { background: #0d0d0d; -webkit-backdrop-filter: none; backdrop-filter: none; border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 28px; width: 560px; max-height: 85vh; overflow-y: auto; position: relative; }
 .modal-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
 .modal-pair { font-family: var(--mono); font-size: 18px; font-weight: 700; }
@@ -704,6 +771,88 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .modal-imgs { display: flex; flex-wrap: wrap; gap: 8px; }
 .modal-img { width: 100%; border-radius: var(--radius); cursor: pointer; }
 .modal-img:hover { opacity: 0.9; }
+
+/* ── Detalle de operación (rediseño tv-*) ── */
+#detail-modal .modal-box{border-radius:16px;padding:24px;animation:detailIn .26s cubic-bezier(.2,.8,.25,1);}
+.tv-kicker{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.tv-pair{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:.01em;}
+.tv-dir{font-family:var(--mono);font-size:12px;font-weight:600;white-space:nowrap;}
+.tv-dir.long{color:var(--green);} .tv-dir.short{color:var(--red);}
+.tv-pill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:5px;}
+.tv-pill.win{color:var(--green);background:rgba(0,255,136,.12);}
+.tv-pill.loss{color:var(--red);background:rgba(255,59,59,.12);}
+.tv-pill.be{color:var(--muted);background:rgba(255,255,255,.06);}
+.tv-pnl{font-family:var(--mono);font-size:30px;font-weight:700;line-height:1;margin-top:14px;}
+.tv-pnl.pos{color:var(--green);} .tv-pnl.neg{color:var(--red);} .tv-pnl.flat{color:var(--muted);font-size:18px;}
+.tv-sub{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:7px;letter-spacing:.01em;}
+.tv-accent{height:1px;margin:16px 0;}
+.tv-accent.pos{background:linear-gradient(90deg,rgba(0,255,136,.7),transparent);}
+.tv-accent.neg{background:linear-gradient(90deg,rgba(255,59,59,.7),transparent);}
+.tv-accent.flat{background:linear-gradient(90deg,rgba(160,90,255,.6),transparent);}
+.tv-slabel{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2);margin:0 0 9px;}
+/* Risk card */
+.tv-risk{background:var(--bg2);border:1px solid rgba(139,47,248,.30);border-radius:16px;padding:16px;}
+.tv-risk-head{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);}
+.tv-risk-head svg{width:13px;height:13px;color:var(--accent2);}
+.tv-risk-accent{height:1px;margin:11px 0 4px;background:linear-gradient(90deg,rgba(139,47,248,.6),transparent);}
+.tv-tl{display:flex;align-items:flex-start;margin:14px 0 4px;}
+.tv-tl-item{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;}
+.tv-tl-item:not(:last-child)::after{content:'';position:absolute;top:5px;left:50%;width:100%;height:1px;background:var(--border2);z-index:0;}
+.tv-tl-dot{width:10px;height:10px;border-radius:50%;z-index:1;margin-bottom:6px;}
+.tv-tl-dot.entry{background:var(--accent2);box-shadow:0 0 6px var(--accent);}
+.tv-tl-dot.sli{background:var(--red);box-shadow:0 0 5px var(--red);}
+.tv-tl-dot.slf{background:var(--green);box-shadow:0 0 5px var(--green);}
+.tv-tl-dot.tp{background:var(--amber);box-shadow:0 0 5px var(--amber);}
+.tv-tl-price{font-family:var(--mono);font-size:11px;color:var(--text);}
+.tv-tl-label{font-family:var(--mono);font-size:8px;color:var(--muted2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px;}
+.tv-bar-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);margin:12px 0 6px;}
+.tv-bar-bg{height:5px;border-radius:3px;background:rgba(255,255,255,.06);border:1px solid var(--border);overflow:hidden;}
+.tv-bar-fill{height:100%;border-radius:3px;background:var(--green);transition:width .3s;}
+.tv-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-top:12px;}
+.tv-metric{background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:11px;padding:10px 12px;}
+.tv-metric-label{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:5px;}
+.tv-metric-value{font-family:var(--mono);font-size:18px;font-weight:700;}
+.tv-metric-sub{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:3px;}
+/* Checklist card */
+.tv-cl{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.tv-cl-top{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.tv-cl-top b{color:var(--text);font-weight:600;}
+.tv-cl-top .frac{color:var(--accent2);font-family:var(--mono);}
+.tv-cl-cat{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin:12px 0 7px;}
+.tv-cl-cat:first-child{margin-top:0;}
+.tv-cl-item{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:12.5px;}
+.tv-cl-check{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--muted2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;}
+.tv-cl-check.done{background:var(--green);border-color:var(--green);color:#000;}
+.tv-cl-item.off span{color:var(--muted2);text-decoration:line-through;}
+/* Notas */
+.tv-notes{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:14px;font-size:13px;line-height:1.7;color:var(--muted);white-space:pre-wrap;}
+/* Capturas */
+.tv-imgs{display:flex;flex-direction:column;gap:8px;}
+.tv-img{width:100%;border-radius:10px;border:1px solid var(--border);display:block;cursor:pointer;}
+.tv-img:hover{opacity:.9;}
+/* Eval */
+.tv-eval{display:flex;gap:26px;flex-wrap:wrap;}
+.tv-rating{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);}
+.tv-rating .num{font-size:23px;font-weight:700;line-height:1;color:var(--amber);}
+.tv-rating .den{font-size:12px;font-weight:500;color:var(--muted2);}
+.tv-rating .mini{display:inline-flex;gap:2px;margin-left:8px;}
+.tv-rating .mini svg{width:11px;height:11px;display:block;}
+.tv-rating .mini .on path{fill:var(--amber);stroke:var(--amber);}
+.tv-rating .mini .off path{fill:none;stroke:var(--muted2);}
+.tv-mpills{display:flex;flex-wrap:wrap;gap:6px;}
+.tv-mpill{display:inline-flex;align-items:center;gap:4px;background:rgba(255,59,59,.10);border:1px solid rgba(255,59,59,.32);color:var(--red);border-radius:100px;padding:3px 11px;font-size:11px;}
+/* IA */
+.tv-ai-feedback{background:rgba(139,47,248,.06);border:1px solid rgba(139,47,248,.24);border-radius:12px;padding:14px;font-size:13px;line-height:1.7;color:var(--text);white-space:pre-wrap;}
+.tv-ai-feedback .hd{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);margin-bottom:9px;}
+.tv-ai-feedback .hd svg{width:13px;height:13px;}
+/* Botones */
+.tv-btn{border-radius:9px;padding:9px 16px;font-size:13px;font-weight:500;cursor:pointer;font-family:var(--sans);}
+.tv-btn.ai{background:rgba(139,47,248,.12);border:1px solid rgba(139,47,248,.35);color:var(--accent2);display:inline-flex;align-items:center;gap:7px;}
+.tv-btn.ai:hover{background:rgba(139,47,248,.18);}
+.tv-btn.ghost{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.tv-btn.ghost:hover{color:var(--text);border-color:var(--muted2);}
+.tv-btn.danger{background:rgba(255,59,59,.10);border:1px solid rgba(255,59,59,.35);color:var(--red);}
+.tv-btn.danger:hover{background:rgba(255,59,59,.16);}
 
 /* ── Lightbox ── */
 .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 300; align-items: center; justify-content: center; cursor: zoom-out; }
@@ -748,14 +897,93 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .news-article-card .art-link { color: var(--muted); text-decoration: none; transition: color .15s; }
 .news-article-card .art-link:hover { color: var(--accent); }
 
+/* ═══ Noticias · diseño diario (nd-*) ═══ */
+:root{ --serif:'Playfair Display',Georgia,serif; --body-serif:'Lora',Georgia,serif; }
+.nd-mast{ text-align:center; border-bottom:3px double var(--border2); padding-bottom:14px; margin-bottom:6px; }
+.nd-mast-top{ display:flex; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:9px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted2); padding-bottom:10px; border-bottom:1px solid var(--border); margin-bottom:14px; }
+.nd-mast-name{ font-family:var(--serif); font-weight:800; font-size:44px; letter-spacing:.01em; color:#fff; line-height:1; display:flex; align-items:center; justify-content:center; gap:14px; }
+.nd-mast-name .nd-dot{ width:9px; height:9px; border-radius:50%; background:var(--green); box-shadow:0 0 8px rgba(0,201,111,.6); }
+.nd-mast-sub{ font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-top:12px; }
+.nd-mast-rule2{ height:1px; background:var(--border2); margin-top:6px; }
+.nd-lead{ padding:26px 0 14px; border-bottom:1px solid var(--border); margin-bottom:22px; }
+.nd-kicker{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent2); display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.nd-kicker::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(139,47,248,.5),transparent); }
+.nd-h{ font-family:var(--serif); font-weight:800; font-size:31px; line-height:1.16; color:#fff; margin:0 0 14px; letter-spacing:.005em; }
+.nd-bias{ display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:5px 12px; border-radius:3px; margin-bottom:16px; }
+.nd-bias .nd-tri{ font-size:8px; }
+.nd-bias.up{ color:var(--green); background:rgba(0,201,111,.10); border:1px solid rgba(0,201,111,.3); }
+.nd-bias.down{ color:var(--red); background:rgba(224,82,82,.10); border:1px solid rgba(224,82,82,.3); }
+.nd-bias.neutral{ color:var(--muted); background:rgba(255,255,255,.05); border:1px solid var(--border2); }
+.nd-body{ font-family:var(--body-serif); font-size:15px; line-height:1.72; color:#cfcfcf; }
+.nd-body p{ margin:0 0 12px; }
+.nd-body .nd-drop::first-letter{ font-family:var(--serif); font-weight:800; font-size:54px; line-height:.82; float:left; padding:6px 12px 0 0; color:#fff; }
+.nd-crit{ margin:16px 0 4px; }
+.nd-crit h4{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.nd-crit ul{ list-style:none; margin:0; padding:0; }
+.nd-crit li{ font-family:var(--body-serif); font-size:13.5px; line-height:1.55; color:#d0c3b0; padding:5px 0 5px 18px; position:relative; }
+.nd-crit li::before{ content:'⚠'; position:absolute; left:0; top:5px; font-size:10px; }
+.nd-cols{ display:grid; grid-template-columns:1fr 1fr; gap:34px; margin:22px 0 8px; }
+.nd-fact h4{ font-family:var(--mono); font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.nd-fact.up h4{ color:var(--green); } .nd-fact.down h4{ color:var(--red); }
+.nd-fact ul{ list-style:none; margin:0; padding:0; }
+.nd-fact li{ font-family:var(--body-serif); font-size:13.5px; line-height:1.5; color:#c6c6c6; padding:5px 0 5px 16px; position:relative; }
+.nd-fact.up li::before{ content:'▲'; position:absolute; left:0; color:var(--green); font-size:9px; top:8px; }
+.nd-fact.down li::before{ content:'▼'; position:absolute; left:0; color:var(--red); font-size:9px; top:8px; }
+.nd-watch{ font-family:var(--body-serif); font-size:13.5px; line-height:1.6; color:#bdbdbd; margin-top:14px; padding:12px 0 0 20px; position:relative; border-top:1px solid var(--border); }
+.nd-watch::before{ content:'👁'; position:absolute; left:0; top:13px; font-size:12px; }
+.nd-watch b{ font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); font-weight:700; }
+.nd-sec{ display:flex; align-items:center; justify-content:space-between; gap:14px; font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding-bottom:12px; border-bottom:1px solid var(--border2); margin:10px 0 20px; }
+.nd-sec .nd-sec-tools{ display:flex; align-items:center; gap:12px; letter-spacing:0; }
+.nd-briefs{ column-count:2; column-gap:44px; }
+.nd-brief{ break-inside:avoid; padding:0 0 20px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.nd-flag{ display:inline-block; font-family:var(--mono); font-size:8px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:#fff; background:var(--red); padding:2px 7px; border-radius:2px; margin-bottom:7px; }
+.nd-brief h3{ font-family:var(--serif); font-weight:700; font-size:17px; line-height:1.22; color:#ededed; margin:0 0 7px; }
+.nd-brief.hot h3{ color:#fff; }
+.nd-byline{ font-family:var(--mono); font-size:9px; letter-spacing:.06em; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.nd-byline .nd-src{ color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:.08em; }
+.nd-byline a{ color:var(--muted2); text-decoration:none; }
+.nd-byline a:hover{ color:var(--accent2); }
+.nd-tag{ font-family:var(--mono); font-size:8px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border:1px solid var(--border2); border-radius:2px; padding:1px 6px; }
+@media (max-width:768px){
+  .nd-briefs{ column-count:1; }
+  .nd-cols{ grid-template-columns:1fr; gap:18px; }
+  .nd-mast-name{ font-size:32px; }
+  .nd-h{ font-size:24px; }
+  .nd-mast-top{ font-size:8px; }
+}
+
 /* Login screen */
-.login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+.login-screen { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background:
+    radial-gradient(120% 85% at 50% -8%, rgba(139,47,248,.28), transparent 55%),
+    radial-gradient(80% 60% at 50% 118%, rgba(0,110,255,.10), transparent 60%),
+    #08080c; }
 .login-screen.hidden { display: none; }
-.login-box { width: 100%; max-width: 360px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; backdrop-filter: none; }
-.login-box .form-group label { display: block; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted2); margin-bottom: 6px; }
-.login-box .form-group input { width: 100%; background: #1a1a1a; border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; font-size: 13px; font-family: var(--sans); color: var(--text); outline: none; box-sizing: border-box; }
-.login-box .form-group input:focus { border-color: var(--accent); }
-.login-error { font-size: 12px; color: var(--red, #ff5c7a); margin-top: 8px; }
+.login-box { width: 100%; max-width: 350px; position: relative;
+  background: rgba(19,19,24,.9);
+  border: 1px solid rgba(255,255,255,.09); border-radius: 22px; padding: 32px 26px;
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 30px 70px rgba(0,0,0,.6), 0 0 0 1px rgba(139,47,248,.06), inset 0 1px 0 rgba(255,255,255,.05); }
+.lg-markwrap { display: flex; justify-content: center; margin-bottom: 18px; }
+.lg-mark { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(150deg, var(--accent2), var(--accent)); box-shadow: 0 8px 22px rgba(139,47,248,.5); }
+.lg-mark svg { width: 29px; height: 29px; }
+.lg-mark svg rect { fill: #fff; }
+.lg-brand { font-family: var(--sans); font-size: 19px; font-weight: 600; color: #fff; display: flex; align-items: center; gap: 9px; justify-content: center; }
+.lg-gdot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px rgba(0,255,136,.6); }
+.lg-sub { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); text-align: center; margin-top: 7px; margin-bottom: 22px; }
+.lg-fld { margin-bottom: 12px; }
+.lg-fld label { display: block; font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: .09em; color: var(--muted2); margin-bottom: 6px; }
+.lg-ipt { display: flex; align-items: center; gap: 9px; background: #17171c; border: 1px solid var(--border); border-radius: 11px; padding: 0 12px; height: 44px; transition: border-color .18s, box-shadow .18s; }
+.lg-ipt:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,47,248,.16); }
+.lg-ipt svg { width: 16px; height: 16px; color: var(--muted2); flex-shrink: 0; }
+.lg-ipt input { flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text); font-size: 13px; font-family: var(--sans); }
+.lg-ipt input::placeholder { color: #555; }
+.lg-enter { width: 100%; height: 46px; border: none; border-radius: 12px; background: linear-gradient(150deg, var(--accent2), var(--accent)); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 22px rgba(139,47,248,.4); font-family: var(--sans); margin-top: 6px; transition: transform .12s, box-shadow .2s, opacity .18s; }
+.lg-enter:hover { transform: translateY(-1px); box-shadow: 0 10px 26px rgba(139,47,248,.5); }
+.lg-enter:active { transform: translateY(0); }
+.lg-enter:disabled { opacity: .6; cursor: default; transform: none; box-shadow: 0 6px 16px rgba(139,47,248,.3); }
+.login-error { font-size: 12px; color: var(--red, #ff5c7a); margin-top: 10px; text-align: center; }
 
 .toast.show { opacity: 1; }
 /* Checklist & Strategies */
@@ -771,17 +999,17 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .strat-name{font-family:var(--mono);font-size:14px;font-weight:700;}
 .strat-foot{margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--muted2);}
 .sc-chev{display:none;}
-@media (max-width: 768px) {
-  #strat-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
-  .strat-card { padding: 13px 34px 13px 14px; border-radius: 11px; position: relative; }
-  .strat-card-head { margin-bottom: 0; }
-  .strat-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .strat-card .strat-rule { display: none; }
-  .strat-card .strat-foot { margin-top: 4px; }
-  .sc-chev { display: block; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted2); font-size: 17px; }
-}
-/* ===== Ajustes móvil (rediseño) ===== */
-.settings-mobile{display:none;}
+#strat-grid, #strat-grid-m { grid-template-columns: 1fr !important; gap: 8px !important; }
+.strat-card { padding: 13px 34px 13px 14px; border-radius: 11px; position: relative; }
+.strat-card-head { margin-bottom: 0; }
+.strat-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.strat-card .strat-rule { display: none; }
+.strat-card .strat-foot { margin-top: 4px; }
+.sc-chev { display: block; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted2); font-size: 17px; }
+/* ===== Ajustes móvil (rediseño) — ahora también en PC ===== */
+.settings-mobile{display:block;}
+.settings-desktop{display:none;}
+#strat-grid-m{display:grid;grid-template-columns:1fr;gap:8px;}
 .mset-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:30px 4px 10px;display:flex;align-items:center;justify-content:space-between;}
 .mset-label:first-child{margin-top:4px;}
 .mset-add{background:none;border:none;color:var(--accent2);font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer;padding:4px;}
@@ -809,21 +1037,45 @@ body.voice-active .content { overflow: hidden; padding: 0; }
 .mset-editor input{width:100%;box-sizing:border-box;background:#1a1a2e;border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:13px;font-family:var(--sans);}
 .mset-brow{display:flex;gap:8px;margin-top:8px;}
 .mset-brow .btn{flex:1;}
-@media (max-width:768px){
-  .settings-desktop{display:none;}
-  .settings-mobile{display:block;}
-  #strat-grid-m{display:grid;grid-template-columns:1fr;gap:8px;}
-}
 .strat-rule{font-size:12px;color:var(--muted);padding:5px 8px;background:var(--bg3);border-radius:6px;display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .strat-rule::before{content:'·';color:var(--accent);font-size:16px;line-height:1;}
-.strat-modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:28px;width:480px;max-height:85vh;overflow-y:auto;}
+.strat-modal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:28px;width:480px;max-height:85vh;overflow:hidden auto;}
 .rule-input-row{display:flex;gap:8px;margin-bottom:8px;}
-.rule-input-row input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:13px;font-family:var(--sans);color:var(--text);outline:none;}
+.rule-input-row input{flex:1;min-width:0;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:13px;font-family:var(--sans);color:var(--text);outline:none;}
 .rule-input-row input:focus{border-color:var(--accent);}
 .rules-list{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .rule-row{display:flex;align-items:center;gap:8px;background:var(--bg3);border-radius:var(--radius);padding:8px 10px;}
-.rule-row span{flex:1;font-size:13px;color:var(--muted);}
+.rule-row span{flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;color:var(--muted);}
 .rule-row button{background:transparent;border:none;cursor:pointer;color:var(--muted2);font-size:12px;padding:2px 6px;}
+/* ── Modal estrategia rediseñado ── */
+.strat-modal-box{border-radius:16px;animation:mkIn .22s ease;}
+@keyframes mkIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+@keyframes ovFade{from{opacity:0;}to{opacity:1;}}
+@keyframes detailIn{from{opacity:0;transform:translateY(12px) scale(.985);}to{opacity:1;transform:none;}}
+/* Cierre animado de modales */
+.modal-overlay.closing{animation:ovFadeOut .2s ease forwards;}
+@keyframes ovFadeOut{from{opacity:1;}to{opacity:0;}}
+.modal-overlay.closing .modal-box,
+.modal-overlay.closing .wr-modal-box,
+.modal-overlay.closing .wr-edit-modal-box,
+.modal-overlay.closing .strat-modal-box{animation:boxOut .2s cubic-bezier(.4,0,1,1) forwards !important;}
+@keyframes boxOut{from{transform:none;}to{transform:translateY(8px) scale(.98);}}
+.strat-modal-box .sm-accentline{height:1px;background:linear-gradient(90deg,rgba(160,90,255,.75),transparent);margin:-4px 0 18px;}
+.sm-title-icon{width:16px;height:16px;color:var(--accent2);flex:0 0 auto;}
+.strat-modal-box .sm-grouplbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--accent2);margin:16px 2px 8px;}
+.strat-modal-box .sm-select{width:150px;flex-shrink:0;background:#16161c;border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:13px;font-family:var(--sans);color:var(--text);outline:none;}
+.strat-modal-box .sm-select option{background:#181818;color:var(--text);}
+.strat-modal-box .rule-input-row input{background:#16161c;border:1px solid var(--border);border-radius:10px;padding:11px 13px;}
+.strat-modal-box .rule-input-row > .btn{background:rgba(139,47,248,.12);border:1px solid rgba(139,47,248,.3);color:#c98bff;border-radius:10px;font-weight:600;}
+.strat-modal-box .rule-row{background:rgba(255,255,255,.028);border:1px solid var(--border);border-radius:10px;padding:10px 12px 10px 15px;position:relative;overflow:hidden;}
+.strat-modal-box .rule-row span{color:var(--text);}
+.strat-modal-box .rule-row.cat-entry::before,.strat-modal-box .rule-row.cat-exit::before,.strat-modal-box .rule-row.cat-context::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;}
+.strat-modal-box .rule-row.cat-entry::before{background:var(--accent2);}
+.strat-modal-box .rule-row.cat-exit::before{background:#f5a623;}
+.strat-modal-box .rule-row.cat-context::before{background:#4a4a55;}
+.strat-modal-box .rule-row button{border-radius:6px;width:24px;height:24px;padding:0;}
+.strat-modal-box .rule-row button:hover{color:var(--red);background:rgba(224,82,82,.1);}
+.strat-modal-box .form-group input,.strat-modal-box .form-group textarea{background:#16161c;border:1px solid var(--border);border-radius:10px;}
 .rule-row button:hover{color:var(--red);}
 .modal-cl-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:12px;}
 .modal-cl-check{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--muted2);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;}
@@ -837,7 +1089,7 @@ body.voice-active .content { overflow: hidden; padding: 0; }
   .main { height: 100vh; display: flex; flex-direction: column; }
   .content { padding: 8px 12px; padding-bottom: 104px; flex: 1; overflow-y: auto; overflow-x: hidden; }
   .main .content > .quote-bar { margin: -8px -12px 12px; }
-  #page-dashboard .dash-tabs { margin-top: 8px; margin-bottom: 22px; }
+  #page-dashboard .dash-tabs { margin-top: 8px; margin-bottom: 14px; }
   .charts-row { grid-template-columns: 1fr !important; gap: 10px; }
   .trades-table .row-actions { opacity: 1; }
   /* Trade Score — apilar radar y cifras en móvil */
@@ -882,11 +1134,23 @@ body.voice-active .content { overflow: hidden; padding: 0; }
   .dr-metrics { grid-template-columns: 1fr 1fr !important; gap: 8px; }
   .dr-timeline { overflow-x: auto; }
 
+  /* Detalle rediseñado (tv-*) en móvil */
+  #detail-modal .modal-box { padding: 20px 16px; }
+  .tv-metrics { gap: 7px; }
+  .tv-metric { padding: 9px 10px; }
+  .tv-metric-value { font-size: 16px; }
+  .tv-tl { overflow-x: auto; }
+  .tv-pnl { font-size: 27px; }
+
   /* Calendario — gestionado en el primer @media block */
 
   /* Modal */
   .modal-box { width: 95vw; padding: 20px 16px; }
   .strat-modal-box { width: 95vw; padding: 20px 16px; }
+  .strat-modal-box .rule-input-row { flex-wrap: wrap; }
+  .strat-modal-box .sm-select { flex: 1 1 100%; width: 100%; }
+  .strat-modal-box .rule-input-row input { flex: 1 1 0; }
+  .strat-modal-box .rule-input-row > .btn { flex: 0 0 auto; white-space: nowrap; }
   .modal-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
 
   /* Table: hide less important columns on mobile */
@@ -901,9 +1165,6 @@ body.voice-active .content { overflow: hidden; padding: 0; }
   /* ASS: ocultar solo el orbe flotante en móvil (la esfera de la sección ASS sí se muestra) */
   #up-orb-root { display: none !important; }
 
-  /* Transición fluida al cambiar de sección (solo opacidad: no rompe position:fixed) */
-  .page.active { animation: pageFadeIn .28s ease; }
-  @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* Nueva operación: topbar + bar fijo (resumen + guardar) y sin nav */
   body[data-page="new"] .mobile-nav { display: none; }
@@ -1031,7 +1292,7 @@ body.sb-collapsed .nav-item:hover::after { opacity:1; }
 
 .dh-score-panel { max-height:0; overflow:hidden; opacity:0;
   transition:max-height .35s cubic-bezier(.4,0,.2,1), opacity .25s, margin-top .3s; margin-top:0; }
-.dh-score-panel.open { max-height:900px; opacity:1; margin-top:20px; }
+.dh-score-panel.open { max-height:3000px; opacity:1; margin-top:20px; }
 .dh-score-panel-inner { display:grid; grid-template-columns:auto 1fr; gap:28px; align-items:center;
   padding:20px 22px; border:1px solid var(--border); border-radius:10px; background:rgba(255,255,255,0.015); }
 .dh-radar-wrap { width:200px; height:200px; flex-shrink:0; }
@@ -1115,7 +1376,7 @@ input.nt-computed { background:rgba(0,200,140,0.05)!important; border-color:rgba
 input.nt-filled { border-color:rgba(139,47,248,0.32)!important; }
 
 /* ═══ UP · ORBE FLOTANTE ═══ */
-#up-orb-root { position:fixed; right:22px; bottom:22px; z-index:900; display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+#up-orb-root { position:fixed; right:22px; bottom:22px; z-index:900; display:none !important; flex-direction:column; align-items:flex-end; gap:12px; }
 body.voice-active #up-orb-root { display:none; }
 
 .up-orb { position:relative; width:78px; height:78px; border:none; border-radius:0;
@@ -1173,6 +1434,13 @@ body.voice-active #up-orb-root { display:none; }
 .voice-wrapper { height: 100%; background: transparent; }
 .voice-main { background: transparent!important; }
 #voice-nebula-bg { display: none!important; }
+.voice-textbar { position:absolute; left:50%; transform:translateX(-50%); bottom:26px; z-index:60; width:min(560px, calc(100% - 44px)); display:flex; gap:8px; align-items:center; pointer-events:auto; background:rgba(12,26,45,0.72); border:1px solid rgba(120,175,225,0.22); border-radius:14px; padding:7px 8px 7px 15px; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); box-shadow:0 10px 30px rgba(0,0,0,0.4); }
+.voice-textbar input { flex:1; min-width:0; background:transparent; border:none; outline:none; color:rgba(225,240,255,0.95); font-size:14px; font-family:inherit; }
+.voice-textbar input::placeholder { color:rgba(150,180,215,0.5); }
+.voice-text-send { flex-shrink:0; width:34px; height:34px; border:none; border-radius:10px; cursor:pointer; background:linear-gradient(150deg, rgba(95,175,245,0.95), rgba(60,120,235,0.95)); color:#fff; font-size:13px; display:flex; align-items:center; justify-content:center; transition:filter .15s, transform .1s; }
+.voice-text-send:hover { filter:brightness(1.12); }
+.voice-text-send:active { transform:scale(0.94); }
+@media (max-width:768px){ .voice-textbar { bottom:16px; } }
 
 /* ═══ ASISTENTE DE VOZ ═══ */
 /* ═══ UP — Opción 3: barra top + historial bottom ═══ */
@@ -1193,7 +1461,8 @@ body.voice-active #up-orb-root { display:none; }
 .voice-config-bar { position:absolute; top:72px; right:28px; z-index:55; width:min(420px, calc(100% - 44px));
   background:rgba(8,20,38,0.92); backdrop-filter:blur(14px); border:1px solid rgba(140,190,235,0.16);
   border-radius:12px; box-shadow:0 18px 48px rgba(0,0,0,0.55); pointer-events:auto; overflow:hidden; }
-.voice-config-body { display:none; padding:16px 18px 18px; }
+.voice-config-body { display:block; padding:0; }
+#voice-config-body .voice-cfg-head, #voice-config-body .voice-cfg-metrics { display:none; }
 .voice-config-body.open { display:block; }
 .voice-config-bar:not(:has(.voice-config-body.open)) { display:none; }
 .voice-cfg-title { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;
@@ -1248,9 +1517,9 @@ body.voice-active #up-orb-root { display:none; }
 /* CONSTELACIÓN — centro */
 
 /* BARRA HISTORIAL — abajo */
-.voice-histbar { position:absolute; bottom:84px; left:0; right:0; z-index:30; padding:0 44px; background:none; border:none; pointer-events:none; opacity:0; transition:opacity .35s; text-align:center; }
+.voice-histbar { position:absolute; bottom:84px; left:0; right:0; z-index:30; padding:0 44px; background:none; border:none; pointer-events:none; opacity:0; transition:opacity .35s; text-align:center; max-height:min(42vh,300px); overflow-y:auto; }
 .voice-histbar-entries { align-items:center; }
-.voice-histbar.has-content { opacity:1; }
+.voice-histbar.has-content { opacity:1; pointer-events:auto; }
 .voice-histbar-entries { display:flex; flex-direction:column; gap:2px; }
 .voice-histbar-entry { display:grid; grid-template-columns:36px 1fr; gap:8px; align-items:baseline; }
 .voice-histbar-who { font-family:var(--mono); font-size:8px; color:rgba(255,255,255,0.2); text-transform:uppercase; letter-spacing:.06em; }
@@ -1297,18 +1566,29 @@ body.voice-active #up-orb-root { display:none; }
 <!-- Login screen -->
 <div id="login-screen" class="login-screen">
   <div class="login-box">
-    <div class="logo" style="justify-content:center;margin-bottom:6px;"><span class="logo-dot"></span>TRADE LOG</div>
-    <div class="logo-sub" style="text-align:center;margin-bottom:24px;">Acceso privado</div>
-    <div class="form-group" style="margin-bottom:12px;">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="username">
+    <div class="lg-markwrap">
+      <div class="lg-mark">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="10" width="4.2" height="10.5" rx="2.1"/><rect x="9.9" y="4" width="4.2" height="16.5" rx="2.1"/><rect x="16.3" y="7.5" width="4.2" height="13" rx="2.1"/></svg>
+      </div>
     </div>
-    <div class="form-group" style="margin-bottom:6px;">
+    <div class="lg-brand"><span class="lg-gdot"></span>Trade Log</div>
+    <div class="lg-sub">Acceso privado</div>
+    <div class="lg-fld">
+      <label>Email</label>
+      <div class="lg-ipt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>
+        <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+    <div class="lg-fld">
       <label>Contraseña</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="lg-ipt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
     </div>
     <div id="login-error" class="login-error" style="display:none;"></div>
-    <button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="doLogin()" id="login-btn">Entrar</button>
+    <button class="lg-enter" onclick="doLogin()" id="login-btn">Entrar</button>
   </div>
 </div>
 
@@ -1337,9 +1617,6 @@ body.voice-active #up-orb-root { display:none; }
       </button>
       <button class="nav-item" onclick="goTo('payouts', this)" data-tip="Payouts">
         <span class="nav-icon">$</span><span class="sb-label">Payouts</span>
-      </button>
-      <button class="nav-item" onclick="goTo('news', this)" data-tip="Noticias">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="15" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12.5" x2="16" y2="12.5"/><line x1="8" y1="16" x2="13" y2="16"/></svg></span><span class="sb-label">Noticias</span>
       </button>
       <div class="nav-section sb-label nav-section-actions">Acciones</div>
       <button class="nav-item nav-actions-first" onclick="goTo('new', this)" data-tip="Nueva operación">
@@ -1372,8 +1649,10 @@ body.voice-active #up-orb-root { display:none; }
       <div id="page-dashboard" class="page active">
         <div id="wr-banner-slot"></div>
         <div class="dash-tabs">
-          <button class="dash-tab active" onclick="setDashTab('resumen', this)">Resumen</button>
-          <button class="dash-tab" onclick="setDashTab('detalle', this)">Detalle</button>
+          <div class="dash-seg">
+            <button class="dash-tab active" onclick="setDashTab('resumen', this)">Resumen</button>
+            <button class="dash-tab" onclick="setDashTab('detalle', this)">Detalle</button>
+          </div>
         </div>
 
         <div id="dash-tab-resumen" class="dash-tab-content active">
@@ -1382,7 +1661,6 @@ body.voice-active #up-orb-root { display:none; }
           <div class="dh-hero">
             <div class="dh-hero-row">
               <span class="dh-hero-val" id="s-pnl">$0.00</span>
-              <span class="dh-hero-ops" id="s-total-line">0 operaciones</span>
             </div>
             <div class="dh-hero-sub">Resultado neto acumulado</div>
           </div>
@@ -1497,7 +1775,7 @@ body.voice-active #up-orb-root { display:none; }
           </div>
 
           <!-- 4 · GLOSARIO (plegable) -->
-          <button type="button" class="det-glossary-toggle" onclick="var g=document.getElementById('det-gloss');var o=g.style.display==='none';g.style.display=o?'block':'none';this.querySelector('.cw').style.transform=o?'rotate(180deg)':'';">
+          <button type="button" class="det-glossary-toggle" id="gloss-toggle">
             ¿Qué mide el Trade Score? <span class="cw">▾</span>
           </button>
           <div class="det-glossary" id="det-gloss" style="display:none;">
@@ -1740,7 +2018,7 @@ body.voice-active #up-orb-root { display:none; }
                 <div class="op-sum-bar-bg"><div class="op-sum-bar-fill" id="sum-reduc-fill" style="width:0%;background:#00c96f"></div></div>
               </div>
               <div class="op-sum-row"><span>Checklist</span><span id="sum-checklist">—</span></div>
-              <button class="btn btn-primary" onclick="addTrade()" style="width:100%;justify-content:center;margin-top:16px;">Guardar operación</button>
+              <button class="btn btn-primary btn-solid" onclick="addTrade()" style="width:100%;justify-content:center;margin-top:16px;">Guardar operación</button>
               <button class="btn btn-ghost" onclick="resetForm()" style="width:100%;justify-content:center;margin-top:8px;">Limpiar</button>
             </div>
           </div>
@@ -1810,19 +2088,7 @@ body.voice-active #up-orb-root { display:none; }
                 </div>
                 <div id="ai-key-status" style="font-size:11px;color:var(--muted);margin-top:8px;"></div>
               </div>
-              <div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;"><span class="key-dot" id="news-key-dot"></span>Noticias</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;max-width:520px;">
-                  <div class="form-group" style="flex:1;min-width:200px;">
-                    <label>Clave de API (Marketaux)</label>
-                    <input type="password" id="news-api-key" placeholder="Tu token de Marketaux...">
-                  </div>
-                  <button class="btn btn-primary btn-sm" onclick="saveNewsApiKey()">Guardar</button>
-                  <button class="btn btn-ghost btn-sm" onclick="clearNewsApiKey()">Borrar</button>
-                </div>
-                <div id="news-key-status" style="font-size:11px;color:var(--muted);margin-top:8px;"></div>
               </div>
-            </div>
           </div>
 
           <div class="settings-row">
@@ -1872,88 +2138,12 @@ body.voice-active #up-orb-root { display:none; }
               <input type="password" id="ai-api-key-m" placeholder="sk-or-...">
               <div class="mset-brow"><button class="btn btn-primary btn-sm" onclick="saveApiKeyM()">Guardar</button><button class="btn btn-ghost btn-sm" onclick="clearApiKeyM()">Borrar</button></div>
             </div>
-            <div class="mset-row" onclick="toggleKeyEditor('news')">
-              <div class="mset-l"><div class="mset-t">Noticias</div><div class="mset-m">Marketaux</div></div>
-              <div class="mset-r"><span class="mset-pill warn" id="news-key-pill-m">Sin clave</span><span class="mset-chev">›</span></div>
+            <div class="mset-row" onclick="toggleKeyEditor('voice')">
+              <div class="mset-l"><div class="mset-t">Asistente ASS (voz)</div><div class="mset-m">Anthropic</div></div>
+              <div class="mset-r"><span class="mset-pill warn" id="voice-key-pill-m">Sin clave</span><span class="mset-chev">›</span></div>
             </div>
-            <div class="mset-editor" id="news-editor-m" style="display:none;">
-              <input type="password" id="news-api-key-m" placeholder="Token de Marketaux...">
-              <div class="mset-brow"><button class="btn btn-primary btn-sm" onclick="saveNewsApiKeyM()">Guardar</button><button class="btn btn-ghost btn-sm" onclick="clearNewsApiKeyM()">Borrar</button></div>
-            </div>
-          </div>
-
-          <div class="mset-label">Datos</div>
-          <div class="mset-group">
-            <div class="mset-row" onclick="exportData()"><div class="mset-l"><div class="mset-t">Exportar</div><div class="mset-m">Copia en JSON</div></div><span class="mset-chev">›</span></div>
-            <div class="mset-row" onclick="document.getElementById('import-file-m').click()"><div class="mset-l"><div class="mset-t">Importar</div><div class="mset-m">Restaurar desde JSON</div></div><span class="mset-chev">›</span></div>
-            <input type="file" id="import-file-m" accept=".json" style="display:none" onchange="importData(event)">
-            <div class="mset-row danger" onclick="openResetConfirm()"><div class="mset-l"><div class="mset-t">Borrar todo</div><div class="mset-m">Operaciones, payouts y estrategias</div></div><span class="mset-chev">›</span></div>
-          </div>
-        </div>
-
-      </div>
-
-
-      <!-- NOTICIAS -->
-      <div id="page-news" class="page">
-
-
-          <div class="news-header">
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-              <button class="btn btn-primary" onclick="fetchAndSummarizeNews()" id="news-fetch-btn">⟳ Actualizar</button>
-              <div id="news-last-update" style="font-family:var(--mono);font-size:9px;color:var(--muted);"></div>
-            </div>
-          </div>
-          <div id="news-no-key" style="display:none;">
-            <div class="empty-state"><div class="big">🔑</div><p>Necesitas configurar tu clave de Marketaux en <strong>Ajustes → Noticias</strong> para activar esta sección.</p><button class="btn btn-ghost btn-sm" onclick="goTo('settings', null)" style="margin-top:12px;">Ir a Ajustes</button></div>
-          </div>
-          <div id="news-loading" style="display:none;text-align:center;padding:60px 0;">
-            <div style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;">OBTENIENDO NOTICIAS Y GENERANDO RESUMEN...</div>
-            <div style="width:40px;height:40px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:20px auto 0;"></div>
-          </div>
-          <div id="news-error" style="display:none;">
-            <div class="empty-state"><div class="big">⚠️</div><p id="news-error-msg">Error al obtener noticias.</p><button class="btn btn-ghost btn-sm" onclick="fetchAndSummarizeNews()" style="margin-top:12px;">Reintentar</button></div>
-          </div>
-          <div id="news-result" style="display:none;">
-            <div class="news-ai-card">
-              <div class="news-ai-header">
-                <span class="news-ai-label"><span class="star">✦</span>Resumen IA — Crude Oil</span>
-                <span id="news-timestamp" class="news-ai-ts"></span>
-              </div>
-              <div id="news-summary" class="news-ai-body"></div>
-            </div>
-            <div class="news-articles-header">
-              <span>◈ Noticias analizadas</span>
-              <span style="display:flex;align-items:center;gap:12px;">
-                <span class="news-window">
-                  <span class="news-window-lbl">Ventana</span>
-                  <select id="news-window-select" onchange="ntSetNewsWindow(this.value)">
-                    <option value="3">3 días</option>
-                    <option value="7" selected>7 días</option>
-                    <option value="14">14 días</option>
-                    <option value="30">30 días</option>
-                  </select>
-                </span>
-                <span id="news-articles-count" style="color:var(--muted);"></span>
-              </span>
-            </div>
-            <div id="news-articles" style="display:flex;flex-direction:column;gap:8px;"></div>
-          </div>
-          <div id="news-empty" style="display:block;">
-            <div class="empty-state"><div class="big">◫</div><p>Pulsa <strong>Actualizar</strong> para obtener las últimas noticias sobre crudo y un análisis generado por IA.</p></div>
-          </div>
-
-      </div>
-
-      <!-- VOZ IA -->
-      <div id="page-voice" class="page">
-        <div class="voice-wrapper">
-          <button class="voice-cfg-btn" onclick="toggleVoiceConfig()" title="Configuración de UP" aria-label="Configuración">
-            <span class="voice-cfg-icon">⚙</span>
-            <span class="voice-cfg-dot" id="voice-config-status-dot"></span>
-          </button>
-          <div class="voice-config-bar">
-            <div class="voice-config-body" id="voice-config-body">
+            <div class="mset-editor" id="voice-editor-m" style="display:none;">
+              <div id="voice-config-body">
               <div class="voice-cfg-head">
                 <div class="voice-cfg-brand">
                   <span class="voice-cfg-brand-name">✦ ASS</span>
@@ -1998,9 +2188,27 @@ body.voice-active #up-orb-root { display:none; }
                 <button class="btn btn-primary btn-sm" onclick="saveVoiceConfig()">Guardar</button>
                 <button class="btn btn-ghost btn-sm" onclick="voiceClearHistory()">Borrar historial de conversación</button>
               </div>
-              <div id="voice-error-container"></div>
+              <div id="voice-error-container"></div></div>
             </div>
+
+            </div>
+
+          <div class="mset-label">Datos</div>
+          <div class="mset-group">
+            <div class="mset-row" onclick="exportData()"><div class="mset-l"><div class="mset-t">Exportar</div><div class="mset-m">Copia en JSON</div></div><span class="mset-chev">›</span></div>
+            <div class="mset-row" onclick="document.getElementById('import-file-m').click()"><div class="mset-l"><div class="mset-t">Importar</div><div class="mset-m">Restaurar desde JSON</div></div><span class="mset-chev">›</span></div>
+            <input type="file" id="import-file-m" accept=".json" style="display:none" onchange="importData(event)">
+            <div class="mset-row danger" onclick="openResetConfirm()"><div class="mset-l"><div class="mset-t">Borrar todo</div><div class="mset-m">Operaciones, payouts y estrategias</div></div><span class="mset-chev">›</span></div>
           </div>
+        </div>
+
+      </div>
+
+
+      <!-- NOTICIAS -->
+      
+      <div id="page-voice" class="page">
+        <div class="voice-wrapper">
 
           <div class="voice-status-bar" id="voice-status-bar" style="display:none;"></div>
 
@@ -2025,6 +2233,12 @@ body.voice-active #up-orb-root { display:none; }
             </div>
             <div class="voice-instructions" id="voice-instructions" style="display:none;"></div>
             <div class="voice-footer"><span id="voice-footer-status"></span></div>
+
+            <div class="voice-textbar" id="voice-textbar">
+              <input type="text" id="voice-text-input" placeholder="Escribe a ASS y te responderá por texto…" autocomplete="off"
+                     onkeydown="if(event.key==='Enter'){event.preventDefault();voiceSendText();}">
+              <button class="voice-text-send" onclick="voiceSendText()" aria-label="Enviar" title="Enviar">➤</button>
+            </div>
           </div>
         </div>
       </div>
@@ -2061,47 +2275,57 @@ body.voice-active #up-orb-root { display:none; }
 <!-- Detail modal -->
 <div class="modal-overlay" id="detail-modal">
   <div class="modal-box">
-    <div class="modal-head">
+    <div class="modal-head" style="margin-bottom:0;">
       <div>
-        <div class="modal-pair" id="m-pair">—</div>
-        <div style="margin-top:6px;display:flex;gap:8px" id="m-badges"></div>
+        <div class="tv-kicker" id="m-kicker">
+          <span class="tv-pair" id="m-pair">—</span>
+          <span id="m-badges" style="display:contents;"></span>
+        </div>
+        <div class="tv-pnl" id="m-pnl"></div>
+        <div class="tv-sub" id="m-sub"></div>
       </div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-grid" id="m-grid"></div>
+    <div class="tv-accent" id="m-accent"></div>
+
     <div id="m-dynamic-risk" style="display:none;margin-bottom:16px;"></div>
+
     <div id="m-checklist-wrap" style="display:none;margin-bottom:16px;">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Checklist</div>
-      <div id="m-checklist"></div>
+      <div class="tv-cl" id="m-checklist"></div>
     </div>
-    <div id="m-notes-wrap" style="display:none;">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Notas</div>
-      <div class="modal-notes" id="m-notes"></div>
+
+    <div id="m-notes-wrap" style="display:none;margin-bottom:16px;">
+      <div class="tv-slabel">Notas</div>
+      <div class="tv-notes" id="m-notes"></div>
     </div>
-    <div id="m-imgs-wrap" style="display:none">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Capturas</div>
-      <div class="modal-imgs" id="m-imgs"></div>
+
+    <div id="m-imgs-wrap" style="display:none;margin-bottom:16px;">
+      <div class="tv-slabel">Capturas</div>
+      <div class="tv-imgs" id="m-imgs"></div>
     </div>
-    <div id="m-eval-wrap" style="display:none;margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;">
+
+    <div id="m-eval-wrap" style="display:none;margin-bottom:18px;" class="tv-eval">
       <div id="m-rating-wrap" style="display:none;">
-        <div style="font-family:var(--mono);font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Valoración</div>
-        <div id="m-rating" class="star-rating-display"></div>
+        <div class="tv-slabel">Valoración</div>
+        <div id="m-rating" class="tv-rating"></div>
       </div>
       <div id="m-mistakes-wrap" style="display:none;">
-        <div style="font-family:var(--mono);font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;">Errores</div>
-        <div id="m-mistakes" class="mistake-pills-display"></div>
+        <div class="tv-slabel">Errores</div>
+        <div id="m-mistakes" class="tv-mpills"></div>
       </div>
     </div>
-    <div style="margin-top:16px;">
-      <button class="btn btn-ghost btn-sm" id="m-ai-btn" onclick="requestAIFeedback()" style="background:linear-gradient(135deg,#5b4dd4,#00b870);color:#fff;border:none;display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 C13.2 5.8 14.8 8.8 18.2 10.5 C21 11.8 23 12 23 12 C23 12 21 12.2 18.2 13.5 C14.8 15.2 13.2 18.2 12 23 C10.8 18.2 9.2 15.2 5.8 13.5 C3 12.2 1 12 1 12 C1 12 3 11.8 5.8 10.5 C9.2 8.8 10.8 5.8 12 1Z"/></svg>
+
+    <div style="margin-bottom:12px;">
+      <button class="tv-btn ai" id="m-ai-btn" onclick="requestAIFeedback()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 C13.2 5.8 14.8 8.8 18.2 10.5 C21 11.8 23 12 23 12 C23 12 21 12.2 18.2 13.5 C14.8 15.2 13.2 18.2 12 23 C10.8 18.2 9.2 15.2 5.8 13.5 C3 12.2 1 12 1 12 C1 12 3 11.8 5.8 10.5 C9.2 8.8 10.8 5.8 12 1Z"/></svg>
         Feedback IA
       </button>
       <div id="m-ai-result" style="display:none;margin-top:12px;"></div>
     </div>
-    <div style="margin-top:16px;display:flex;gap:8px">
-      <button class="btn btn-ghost btn-sm" onclick="editTradeFromModal()">Editar</button>
-      <button class="btn btn-danger" id="m-delete-btn">Eliminar</button>
+
+    <div style="display:flex;gap:8px">
+      <button class="tv-btn ghost" onclick="editTradeFromModal()">Editar</button>
+      <button class="tv-btn danger" id="m-delete-btn">Eliminar</button>
     </div>
   </div>
 </div>
@@ -2109,13 +2333,15 @@ body.voice-active #up-orb-root { display:none; }
 <!-- Día - lista de operaciones -->
 <div class="modal-overlay" id="day-modal">
   <div class="modal-box" style="width:480px;">
-    <div class="modal-head">
+    <div class="modal-head" style="align-items:flex-start;margin-bottom:0;">
       <div>
-        <div class="modal-pair" id="day-modal-title">—</div>
-        <div style="margin-top:6px;font-family:var(--mono);font-size:12px;color:var(--muted);" id="day-modal-pnl"></div>
+        <div class="dm-kicker" id="day-modal-title">—</div>
+        <div class="dm-pnl" id="day-modal-pnl"></div>
+        <div class="dm-sub" id="day-modal-sub"></div>
       </div>
       <button class="modal-close" onclick="closeDayModal()">✕</button>
     </div>
+    <div class="dm-accent" id="day-modal-accent"></div>
     <div id="day-modal-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 </div>
@@ -2123,20 +2349,21 @@ body.voice-active #up-orb-root { display:none; }
 <!-- Estrategia modal -->
 <div class="modal-overlay" id="strat-modal">
   <div class="strat-modal-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <span style="font-family:var(--mono);font-size:16px;font-weight:700;" id="sm-title">Nueva estrategia</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <span style="font-family:var(--mono);font-size:16px;font-weight:700;display:flex;align-items:center;gap:9px;"><svg class="sm-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg><span id="sm-title">Nueva estrategia</span></span>
       <button class="modal-close" onclick="closeStratModal()">✕</button>
     </div>
+    <div class="sm-accentline"></div>
     <div class="form-group" style="margin-bottom:14px;">
       <label>Nombre</label>
       <input type="text" id="sm-name" placeholder="ej: ICT, SMC, Breakout...">
     </div>
     <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:8px;">Requisitos de entrada</div>
     <div class="rule-input-row">
-      <select id="sm-rule-cat" style="flex-shrink:0;width:140px;background:#242424;border:1px solid var(--border);border-radius:var(--radius);padding:9px 12px;font-size:13px;font-family:var(--sans);color:var(--text);outline:none;">
-        <option value="Market Context" style="background:#242424;">Market Context</option>
-        <option value="Entry Criteria" style="background:#242424;">Entry Criteria</option>
-        <option value="Exit Criteria" style="background:#242424;">Exit Criteria</option>
+      <select id="sm-rule-cat" class="sm-select">
+        <option value="Market Context">Market Context</option>
+        <option value="Entry Criteria">Entry Criteria</option>
+        <option value="Exit Criteria">Exit Criteria</option>
       </select>
       <input type="text" id="sm-rule-input" placeholder="Escribe un requisito y pulsa Enter...">
       <button class="btn btn-ghost btn-sm" onclick="addRuleInput()">+ Añadir</button>
@@ -2212,29 +2439,25 @@ body.voice-active #up-orb-root { display:none; }
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav" id="mobile-nav">
   <button class="mobile-nav-item active" onclick="goTo('dashboard',this)" id="mn-dashboard">
-    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span>Inicio<span class="mn-dot"></span>
+    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg></span><span class="mn-label">Inicio</span><span class="mn-dot"></span>
   </button>
   <button class="mobile-nav-item" onclick="goTo('calendar',this)" id="mn-calendar">
-    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="5.5"/><line x1="16" y1="2.5" x2="16" y2="5.5"/></svg></span>Calendario<span class="mn-dot"></span>
+    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="5.5"/><line x1="16" y1="2.5" x2="16" y2="5.5"/></svg></span><span class="mn-label">Calendario</span><span class="mn-dot"></span>
   </button>
   <button class="mobile-nav-plus" onclick="goTo('new')" aria-label="Nueva operación">
     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>
   </button>
   <button class="mobile-nav-item" onclick="goTo('trades',this)" id="mn-trades">
-    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span>Historial<span class="mn-dot"></span>
+    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg></span><span class="mn-label">Historial</span><span class="mn-dot"></span>
   </button>
   <button class="mobile-nav-item" onclick="toggleMobileMenu(event)" id="mn-more">
-    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span>Más<span class="mn-dot"></span>
+    <span class="mn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></span><span class="mn-label">Más</span><span class="mn-dot"></span>
   </button>
 </nav>
 
 <!-- Menú emergente móvil -->
 <div id="mobile-more-menu" class="mobile-more-menu" onclick="closeMobileMenu()">
   <div class="mobile-more-inner" onclick="event.stopPropagation()">
-    <button class="mobile-more-item" onclick="closeMobileMenu();goTo('news',document.getElementById('mn-more'))">
-      <span class="mobile-more-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="15" rx="2"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="12.5" x2="16" y2="12.5"/><line x1="8" y1="16" x2="13" y2="16"/></svg></span>
-      <span>Noticias</span>
-    </button>
     <button class="mobile-more-item" onclick="closeMobileMenu();goTo('voice',document.getElementById('mn-more'))">
       <span class="mobile-more-icon">✦</span>
       <span>ASS</span>
@@ -2442,7 +2665,6 @@ function goTo(page, btn) {
   if (page === 'payouts') renderPayouts();
   if (page === 'settings') renderStrategies();
   if (page === 'new') { setTimeout(function(){ populateStratSelect(); if(typeof ntApplyDefaults==='function') ntApplyDefaults(); }, 100); }
-  if (page === 'news') initNewsPage();
   document.body.classList.toggle('voice-active', page === 'voice');
   if (page === 'voice') {
     // Guardar estado del sidebar y forzarlo contraído en UP
@@ -2466,7 +2688,7 @@ function goTo(page, btn) {
   const mn = document.getElementById('mn-' + page);
   if (mn) mn.classList.add('active');
   // si es una página del menú "Más", ese botón queda activo
-  if (page === 'new' || page === 'settings' || page === 'news' || page === 'payouts' || page === 'voice') {
+  if (page === 'new' || page === 'settings' || page === 'payouts' || page === 'voice') {
     const more = document.getElementById('mn-more');
     if (more) more.classList.add('active');
   }
@@ -2492,6 +2714,35 @@ function toggleScorePanel(){
   if (open && typeof renderZellaScore === 'function') setTimeout(renderZellaScore, 40);
 }
 window.toggleScorePanel = toggleScorePanel;
+function toggleGlossary(btn){
+  const g = document.getElementById('det-gloss');
+  if (!g) return;
+  btn = btn || document.getElementById('gloss-toggle');
+  const hidden = getComputedStyle(g).display === 'none';
+  g.style.display = hidden ? 'block' : 'none';
+  const cw = btn && btn.querySelector('.cw');
+  if (cw) cw.style.transform = hidden ? 'rotate(180deg)' : '';
+}
+window.toggleGlossary = toggleGlossary;
+// Interacción robusta en móvil: distingue un tap real de un deslizamiento (scroll)
+(function bindGlossaryToggle(){
+  const btn = document.getElementById('gloss-toggle');
+  if (!btn) return;
+  let sx = 0, sy = 0, st = 0, last = 0;
+  const fire = () => {
+    const n = Date.now();
+    if (n - last < 300) return; // evita doble disparo (pointerup + click sintético)
+    last = n;
+    toggleGlossary(btn);
+  };
+  btn.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; st = Date.now(); }, { passive: true });
+  btn.addEventListener('pointerup', e => {
+    // solo si apenas se movió el dedo (no fue scroll) y fue un toque breve
+    if (Math.hypot(e.clientX - sx, e.clientY - sy) < 12 && Date.now() - st < 700) fire();
+  });
+  btn.addEventListener('click', () => fire());               // ratón / respaldo
+  btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fire(); } });
+})();
 
 // ── Redibujar la curva al cambiar el tamaño ──
 let dhResizeTimer = null;
@@ -2533,7 +2784,7 @@ function refreshApiKeyStatus() {
   if (key) {
     input.value = '';
     input.placeholder = '••••••••••••' + key.slice(-4);
-    status.textContent = 'Clave activa · guardada en este navegador.';
+    status.textContent = 'Fuente: GDELT · tiempo real, gratis · no requiere clave.';
     if (dot) dot.classList.add('on');
   } else {
     input.placeholder = 'sk-or-...';
@@ -2555,7 +2806,6 @@ function clearApiKey() {
   showToast('Clave eliminada');
 }
 refreshApiKeyStatus();
-refreshNewsApiKeyStatus();
 function updateOpSummary() {
   const g = id => document.getElementById(id);
   if (!g('sum-pair')) return;
@@ -2765,7 +3015,7 @@ ${buildTradeSummaryForAI(t)}`;
       .replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
-    resultEl.innerHTML = `<div class="modal-ai-feedback">${html}</div>`;
+    resultEl.innerHTML = `<div class="tv-ai-feedback"><div class="hd"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 C13.2 5.8 14.8 8.8 18.2 10.5 C21 11.8 23 12 23 12 C23 12 21 12.2 18.2 13.5 C14.8 15.2 13.2 18.2 12 23 C10.8 18.2 9.2 15.2 5.8 13.5 C3 12.2 1 12 1 12 C1 12 3 11.8 5.8 10.5 C9.2 8.8 10.8 5.8 12 1Z"/></svg>Análisis IA</div>${html}</div>`;
   } catch (err) {
     resultEl.innerHTML = `<div class="modal-ai-error">❌ ${err.message}</div>`;
   } finally {
@@ -3154,7 +3404,8 @@ function openDayModal(dateStr) {
 
   const d = new Date(dateStr + 'T00:00:00');
   const dateLabel = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('day-modal-title').textContent = dateLabel;
+  const calIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="3" y="4.5" width="18" height="16" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="5.5"/><line x1="16" y1="2.5" x2="16" y2="5.5"/></svg>';
+  document.getElementById('day-modal-title').innerHTML = calIcon + dateLabel;
 
   // Bloque de festivo CME
   let holidayHtml = '';
@@ -3172,38 +3423,51 @@ function openDayModal(dateStr) {
     </div>`;
   }
 
+  const pnlEl = document.getElementById('day-modal-pnl');
+  const subEl = document.getElementById('day-modal-sub');
+  const accentEl = document.getElementById('day-modal-accent');
   if (dayTrades.length) {
     const totalPnl = dayTrades.reduce((s,t) => s + t.pnl, 0);
+    const cls = totalPnl > 0 ? 'pos' : totalPnl < 0 ? 'neg' : 'flat';
     const sign = totalPnl >= 0 ? '+' : '-';
-    const color = totalPnl >= 0 ? 'var(--green)' : 'var(--red)';
-    document.getElementById('day-modal-pnl').innerHTML = `<span style="color:${color};font-weight:700;">${sign}$${Math.abs(totalPnl).toFixed(2)}</span> · ${dayTrades.length} ${dayTrades.length===1?'operación':'operaciones'}`;
+    pnlEl.className = 'dm-pnl ' + cls;
+    pnlEl.textContent = `${sign}$${Math.abs(totalPnl).toFixed(2)}`;
+    const wins = dayTrades.filter(t=>t.result==='win').length;
+    const losses = dayTrades.filter(t=>t.result==='loss').length;
+    const bes = dayTrades.filter(t=>t.result==='be').length;
+    let sub = `${dayTrades.length} ${dayTrades.length===1?'operación':'operaciones'} · ${wins}W · ${losses}L`;
+    if (bes) sub += ` · ${bes}BE`;
+    subEl.textContent = sub; subEl.style.display = '';
+    accentEl.className = 'dm-accent ' + cls;
     document.getElementById('day-modal-list').innerHTML = holidayHtml + dayTrades.map(t => {
       const tSign = t.pnl >= 0 ? '+$' : '-$';
-      const tColor = t.pnl >= 0 ? 'var(--green)' : 'var(--red)';
+      const isLong = t.dir.toLowerCase() === 'long';
       const stratName = (t.checklist && t.checklist.stratName) ? t.checklist.stratName : (t.setup || '—');
-      return `<div class="cal-day-trade" onclick="closeDayModal();viewTrade(${t.id})">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="pair-cell">${t.pair}</span>
-          <span class="dir-badge ${t.dir.toLowerCase()}">${t.dir}</span>
-          <span class="result-badge ${t.result}">${t.result==='win'?'✅ Win':t.result==='loss'?'❌ Loss':'➖ BE'}</span>
+      return `<div class="dm-row ${t.result}" onclick="closeDayModal();viewTrade(${t.id})">
+        <div class="dm-l">
+          <span class="dm-pair">${t.pair}</span>
+          <span class="dm-dir ${isLong?'long':'short'}">${isLong?'↑ Long':'↓ Short'}</span>
+          <span class="dm-pill ${t.result}">${t.result==='win'?'Win':t.result==='loss'?'Loss':'BE'}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span style="font-family:var(--mono);font-size:12px;color:var(--muted);">${stratName}</span>
-          <span style="font-family:var(--mono);font-weight:700;color:${tColor};">${tSign}${Math.abs(t.pnl).toFixed(2)}</span>
+        <div class="dm-r">
+          <span class="dm-strat">${stratName}</span>
+          <span class="dm-rpnl ${t.pnl>=0?'pos':'neg'}">${tSign}${Math.abs(t.pnl).toFixed(2)}</span>
         </div>
       </div>`;
     }).join('');
   } else {
-    // Solo festivo, sin trades
-    document.getElementById('day-modal-pnl').innerHTML = `<span style="color:var(--muted);font-size:12px;">Sin operaciones este día</span>`;
+    pnlEl.className = 'dm-pnl flat';
+    pnlEl.textContent = 'Sin operaciones';
+    if (subEl) { subEl.textContent = ''; subEl.style.display = 'none'; }
+    accentEl.className = 'dm-accent flat';
     document.getElementById('day-modal-list').innerHTML = holidayHtml;
   }
 
-  document.getElementById('day-modal').classList.add('open');
+  document.getElementById('day-modal').classList.remove('closing');document.getElementById('day-modal').classList.add('open');
 }
 
 function closeDayModal() {
-  document.getElementById('day-modal').classList.remove('open');
+  closeOverlay('day-modal');
 }
 document.getElementById('day-modal').addEventListener('click', e => { if (e.target === document.getElementById('day-modal')) closeDayModal(); });
 
@@ -3288,7 +3552,8 @@ function renderDashboard() {
 }
 
 function renderBarChart() {
-  const last20 = trades.slice(0,20).reverse();
+  const _tsB = t => { const d = t && t.date ? new Date(t.date).getTime() : 0; return isNaN(d) ? 0 : d; };
+  const last20 = [...trades].sort((a, b) => (_tsB(b) - _tsB(a)) || ((b.id || 0) - (a.id || 0))).slice(0, 20).reverse();
   if (!last20.length) return;
   const maxAbs = Math.max(...last20.map(t => Math.abs(t.pnl)), 1);
   document.getElementById('bar-chart').innerHTML = last20.map(t => {
@@ -3299,7 +3564,8 @@ function renderBarChart() {
 }
 
 function renderEquityChart() {
-  const sorted = [...trades].reverse();
+  const _ts = t => { const d = t && t.date ? new Date(t.date).getTime() : 0; return isNaN(d) ? 0 : d; };
+  const sorted = [...trades].sort((a, b) => (_ts(a) - _ts(b)) || ((a.id || 0) - (b.id || 0)));
   let equity = 0;
   const points = sorted.map(t => { equity += t.pnl; return equity; });
   const dates = sorted.map(t => t.date);
@@ -3491,7 +3757,8 @@ function renderZellaScore() {
   const grossLoss = Math.abs(losses.reduce((a,t)=>a+t.pnl,0));
   const pf = grossLoss > 0 ? (grossWin/grossLoss) : (grossWin > 0 ? 2.0 : 0);
   let equity = 0, peak = 0, dd = 0;
-  [...trades].reverse().forEach(t => { equity += t.pnl; if(equity>peak)peak=equity; if(peak-equity>dd)dd=peak-equity; });
+  const _tsDD = t => { const d = t && t.date ? new Date(t.date).getTime() : 0; return isNaN(d) ? 0 : d; };
+  [...trades].sort((a, b) => (_tsDD(a) - _tsDD(b)) || ((a.id || 0) - (b.id || 0))).forEach(t => { equity += t.pnl; if(equity>peak)peak=equity; if(peak-equity>dd)dd=peak-equity; });
   const ddPct = peak > 0 ? (dd/peak*100) : 0;
   const totalPnl = trades.reduce((a,t)=>a+t.pnl,0);
   const recoveryFactor = dd > 0 ? (totalPnl/dd) : (totalPnl > 0 ? 2.0 : 0);
@@ -3856,7 +4123,9 @@ function renderTrades() {
   const noMsg = document.getElementById('no-trades');
   if (!filtered.length) { tbody.innerHTML=''; noMsg.style.display='block'; return; }
   noMsg.style.display = 'none';
-  tbody.innerHTML = filtered.map(t => tradeRow(t, false)).join('');
+  const _ts = t => { const d = t && t.date ? new Date(t.date).getTime() : 0; return isNaN(d) ? 0 : d; };
+  const ordered = [...filtered].sort((a, b) => (_ts(b) - _ts(a)) || ((b.id || 0) - (a.id || 0)));
+  tbody.innerHTML = ordered.map(t => tradeRow(t, false)).join('');
 }
 
 // ── Stats ──
@@ -3942,51 +4211,53 @@ function viewTrade(id) {
   if (!t) return;
   currentModalId = id;
   document.getElementById('m-pair').textContent = t.pair;
+  const isLong = t.dir.toLowerCase() === 'long';
   document.getElementById('m-badges').innerHTML =
-    `<span class="dir-badge ${t.dir.toLowerCase()}">${t.dir}</span>
-     <span class="result-badge ${t.result}" style="font-size:11px;padding:2px 10px">${t.result === 'win' ? '✅ Win' : t.result === 'loss' ? '❌ Loss' : '➖ BE'}</span>`;
+    `<span class="tv-dir ${isLong ? 'long' : 'short'}">${isLong ? '↑ Long' : '↓ Short'}</span>
+     <span class="tv-pill ${t.result}">${t.result === 'win' ? 'Win' : t.result === 'loss' ? 'Loss' : 'BE'}</span>`;
   const sign = t.pnl >= 0 ? '+$' : '-$';
-  const fields = [
-    ['P&L', sign + Math.abs(t.pnl).toFixed(2)],
-    ['Fecha', t.date],
-    ['Contratos', t.size ? t.size : '—'],
-    ['Entrada', t.entry || '—'],
-    ['SL inicial', t.sl || '—'],
-    ['Take Profit', t.tp || '—'],
-    ['Estrategia', (t.checklist && t.checklist.stratName) ? t.checklist.stratName : (t.setup || '—')],
-    ['Sesión', t.session || '—'],
-  ];
-  document.getElementById('m-grid').innerHTML = fields.map(([k,v]) =>
-    `<div class="modal-field"><div class="modal-field-label">${k}</div><div class="modal-field-val">${v}</div></div>`
-  ).join('');
+  const pnlCls = t.pnl > 0 ? 'pos' : t.pnl < 0 ? 'neg' : 'flat';
+  const pnlEl = document.getElementById('m-pnl');
+  pnlEl.className = 'tv-pnl ' + pnlCls;
+  pnlEl.textContent = sign + Math.abs(t.pnl).toFixed(2);
+  const hasChecklist = !!(t.checklist && t.checklist.items && t.checklist.items.length);
+  const stratName = (t.checklist && t.checklist.stratName) ? t.checklist.stratName : (t.setup || '');
+  const subParts = [];
+  if (t.date) subParts.push(formatShortDate(t.date) + ' ' + String(t.date).slice(0, 4));
+  if (t.session) subParts.push(t.session);
+  if (t.size) subParts.push(t.size + (Number(t.size) === 1 ? ' contrato' : ' contratos'));
+  if (stratName && !hasChecklist) subParts.push(stratName);
+  document.getElementById('m-sub').textContent = subParts.join(' · ');
+  document.getElementById('m-accent').className = 'tv-accent ' + pnlCls;
 
   // Dynamic risk block
   const drWrap = document.getElementById('m-dynamic-risk');
   if (t.sl && t.entry) {
     const riskInit = Math.abs(t.entry - t.sl);
-    let drHtml = `<div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:10px;">⬡ Riesgo dinámico · Safety Line</div>`;
+    let drHtml = `<div class="tv-risk-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4.5v9L12 20l-8-4.5v-9z"/></svg>Riesgo dinámico · Safety Line</div>`;
+    drHtml += `<div class="tv-risk-accent"></div>`;
     if (t.slFinal || t.tp) {
-      drHtml += `<div class="dr-timeline" style="margin-bottom:10px;">`;
-      drHtml += `<div class="dr-tl-item"><div class="dr-tl-dot entry"></div><div class="dr-tl-price">${t.entry}</div><div class="dr-tl-label">Entrada</div></div>`;
-      drHtml += `<div class="dr-tl-item"><div class="dr-tl-dot sl-init"></div><div class="dr-tl-price">${t.sl}</div><div class="dr-tl-label">SL inicial</div></div>`;
-      if (t.slFinal) drHtml += `<div class="dr-tl-item"><div class="dr-tl-dot sl-final"></div><div class="dr-tl-price">${t.slFinal}</div><div class="dr-tl-label">SL final</div></div>`;
-      if (t.tp) drHtml += `<div class="dr-tl-item"><div class="dr-tl-dot tp"></div><div class="dr-tl-price">${t.tp}</div><div class="dr-tl-label">Cierre / TP</div></div>`;
+      drHtml += `<div class="tv-tl">`;
+      drHtml += `<div class="tv-tl-item"><div class="tv-tl-dot entry"></div><div class="tv-tl-price">${t.entry}</div><div class="tv-tl-label">Entrada</div></div>`;
+      drHtml += `<div class="tv-tl-item"><div class="tv-tl-dot sli"></div><div class="tv-tl-price">${t.sl}</div><div class="tv-tl-label">SL inicial</div></div>`;
+      if (t.slFinal) drHtml += `<div class="tv-tl-item"><div class="tv-tl-dot slf"></div><div class="tv-tl-price">${t.slFinal}</div><div class="tv-tl-label">SL final</div></div>`;
+      if (t.tp) drHtml += `<div class="tv-tl-item"><div class="tv-tl-dot tp"></div><div class="tv-tl-price">${t.tp}</div><div class="tv-tl-label">Cierre / TP</div></div>`;
       drHtml += `</div>`;
     }
     if (t.slFinal) {
       const riskMoved = Math.abs(t.slFinal - t.sl);
       const pct = Math.min(100, (riskMoved / riskInit * 100)).toFixed(0);
-      drHtml += `<div class="dr-bar-section"><div class="dr-bar-labels"><span>Riesgo inicial: ${riskInit.toFixed(2)} pts</span><span style="color:var(--green)">Reducción: ${pct}%</span></div><div class="dr-bar-bg"><div class="dr-bar-fill" style="width:${pct}%"></div></div></div>`;
+      drHtml += `<div class="tv-bar-labels"><span>Riesgo inicial: ${riskInit.toFixed(2)} pts</span><span style="color:var(--green)">Reducción: ${pct}%</span></div><div class="tv-bar-bg"><div class="tv-bar-fill" style="width:${pct}%"></div></div>`;
     }
     const riskMoved2 = t.slFinal ? Math.abs(t.slFinal - t.sl) : null;
     const pct2 = riskMoved2 ? Math.min(100, (riskMoved2 / riskInit * 100)).toFixed(0) : null;
     const rFinal = t.tp ? (Math.abs(t.tp - t.entry) / riskInit).toFixed(2) : null;
-    drHtml += `<div class="dr-metrics" style="margin-top:10px;">`;
-    drHtml += `<div class="dr-metric"><div class="dr-metric-label">Riesgo inicial</div><div class="dr-metric-value" style="color:var(--accent)">${riskInit.toFixed(2)}</div><div class="dr-metric-sub">puntos</div></div>`;
-    drHtml += `<div class="dr-metric"><div class="dr-metric-label">Riesgo eliminado</div><div class="dr-metric-value" style="color:${pct2 ? 'var(--green)' : 'var(--muted)'}">${pct2 ? pct2 + '%' : '—'}</div><div class="dr-metric-sub">${riskMoved2 ? riskMoved2.toFixed(2) + ' pts' : 'sin SL final'}</div></div>`;
-    drHtml += `<div class="dr-metric"><div class="dr-metric-label">R final</div><div class="dr-metric-value" style="color:${rFinal ? 'var(--amber)' : 'var(--muted)'}">${rFinal ? rFinal + 'R' : '—'}</div><div class="dr-metric-sub">sobre riesgo inicial</div></div>`;
+    drHtml += `<div class="tv-metrics">`;
+    drHtml += `<div class="tv-metric"><div class="tv-metric-label">Riesgo inicial</div><div class="tv-metric-value" style="color:var(--accent2)">${riskInit.toFixed(2)}</div><div class="tv-metric-sub">puntos</div></div>`;
+    drHtml += `<div class="tv-metric"><div class="tv-metric-label">Riesgo eliminado</div><div class="tv-metric-value" style="color:${pct2 ? 'var(--green)' : 'var(--muted)'}">${pct2 ? pct2 + '%' : '—'}</div><div class="tv-metric-sub">${riskMoved2 ? riskMoved2.toFixed(2) + ' pts' : 'sin SL final'}</div></div>`;
+    drHtml += `<div class="tv-metric"><div class="tv-metric-label">R final</div><div class="tv-metric-value" style="color:${rFinal ? 'var(--amber)' : 'var(--muted)'}">${rFinal ? rFinal + 'R' : '—'}</div><div class="tv-metric-sub">sobre riesgo inicial</div></div>`;
     drHtml += `</div>`;
-    drWrap.innerHTML = `<div style="background:var(--bg3);border:1px solid rgba(192,64,255,0.35);border-radius:var(--radius-lg);padding:14px;">${drHtml}</div>`;
+    drWrap.innerHTML = `<div class="tv-risk">${drHtml}</div>`;
     drWrap.style.display = 'block';
   } else {
     drWrap.style.display = 'none';
@@ -3995,50 +4266,72 @@ function viewTrade(id) {
     const done = t.checklist.items.filter(i => i.checked).length;
     const cats = ['Market Context', 'Entry Criteria', 'Exit Criteria'];
     const hasCats = t.checklist.items.some(i => i.category);
+    const clItem = i => `<div class="tv-cl-item ${i.checked ? '' : 'off'}"><div class="tv-cl-check ${i.checked ? 'done' : ''}">${i.checked ? '✓' : ''}</div><span>${i.rule}</span></div>`;
     let itemsHtml;
     if (hasCats) {
       itemsHtml = cats.map(cat => {
         const items = t.checklist.items.filter(i => (i.category || 'Entry Criteria') === cat);
         if (!items.length) return '';
-        return `<div class="checklist-section-title">${cat}</div>` +
-          items.map(i => `<div class="modal-cl-item"><div class="modal-cl-check ${i.checked ? 'done' : ''}">${i.checked ? '✓' : ''}</div><span style="color:${i.checked ? 'var(--text)' : 'var(--muted2)'};text-decoration:${i.checked ? 'none' : 'line-through'};">${i.rule}</span></div>`).join('');
+        return `<div class="tv-cl-cat">${cat}</div>` + items.map(clItem).join('');
       }).join('');
     } else {
-      itemsHtml = t.checklist.items.map(i => `<div class="modal-cl-item"><div class="modal-cl-check ${i.checked ? 'done' : ''}">${i.checked ? '✓' : ''}</div><span style="color:${i.checked ? 'var(--text)' : 'var(--muted2)'};text-decoration:${i.checked ? 'none' : 'line-through'};">${i.rule}</span></div>`).join('');
+      itemsHtml = t.checklist.items.map(clItem).join('');
     }
     document.getElementById('m-checklist').innerHTML =
-      `<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${t.checklist.stratName} · <span style="color:var(--accent);">${done}/${t.checklist.items.length} cumplidos</span></div>` + itemsHtml;
+      `<div class="tv-cl-top"><b>${t.checklist.stratName}</b> · <span class="frac">${done}/${t.checklist.items.length} cumplidos</span></div>` + itemsHtml;
     document.getElementById('m-checklist-wrap').style.display = 'block';
   } else { document.getElementById('m-checklist-wrap').style.display = 'none'; }
   if (t.notes) { document.getElementById('m-notes').textContent = t.notes; document.getElementById('m-notes-wrap').style.display='block'; }
   else document.getElementById('m-notes-wrap').style.display = 'none';
   if (t.images && t.images.length) {
-    document.getElementById('m-imgs').innerHTML = t.images.map(src => `<img src="${src}" class="modal-img" onclick="openLightbox('${src}')">`).join('');
+    document.getElementById('m-imgs').innerHTML = t.images.map(src => `<img src="${src}" class="tv-img" onclick="openLightbox('${src}')">`).join('');
     document.getElementById('m-imgs-wrap').style.display = 'block';
   } else document.getElementById('m-imgs-wrap').style.display = 'none';
   // Rating
   const ratingWrap = document.getElementById('m-rating-wrap');
   if (t.rating) {
-    document.getElementById('m-rating').innerHTML = [1,2,3,4,5].map(i => `<span class="star ${i<=t.rating?'on':''}" >★</span>`).join('');
+    document.getElementById('m-rating').innerHTML =
+      `<span class="num">${t.rating}</span><span class="den">/5</span>` +
+      `<span class="mini">` + [1,2,3,4,5].map(i => `<svg viewBox="0 0 24 24" class="${i<=t.rating?'on':'off'}"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.7 6.1 21.7l1.2-6.6L2.5 9.5l6.6-.9z" stroke-width="1.6" stroke-linejoin="round"/></svg>`).join('') + `</span>`;
     ratingWrap.style.display = 'block';
   } else ratingWrap.style.display = 'none';
   // Mistakes
   const mistakesWrap = document.getElementById('m-mistakes-wrap');
   if (t.mistakes && t.mistakes.length) {
-    document.getElementById('m-mistakes').innerHTML = t.mistakes.map(m => `<span class="mistake-pill">${m}</span>`).join('');
+    document.getElementById('m-mistakes').innerHTML = t.mistakes.map(m => `<span class="tv-mpill">${m}</span>`).join('');
     mistakesWrap.style.display = 'block';
   } else mistakesWrap.style.display = 'none';
+  // Contenedor de evaluación visible solo si hay valoración o errores
+  document.getElementById('m-eval-wrap').style.display = (t.rating || (t.mistakes && t.mistakes.length)) ? 'flex' : 'none';
   document.getElementById('m-delete-btn').onclick = () => deleteTrade(id);
   const aiResult = document.getElementById('m-ai-result');
   aiResult.style.display = 'none';
   aiResult.innerHTML = '';
   const aiBtn = document.getElementById('m-ai-btn');
   aiBtn.disabled = false;
-  aiBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 C13.2 5.8 14.8 8.8 18.2 10.5 C21 11.8 23 12 23 12 C23 12 21 12.2 18.2 13.5 C14.8 15.2 13.2 18.2 12 23 C10.8 18.2 9.2 15.2 5.8 13.5 C3 12.2 1 12 1 12 C1 12 3 11.8 5.8 10.5 C9.2 8.8 10.8 5.8 12 1Z"/></svg> Feedback IA';
-  document.getElementById('detail-modal').classList.add('open');
+  aiBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1 C13.2 5.8 14.8 8.8 18.2 10.5 C21 11.8 23 12 23 12 C23 12 21 12.2 18.2 13.5 C14.8 15.2 13.2 18.2 12 23 C10.8 18.2 9.2 15.2 5.8 13.5 C3 12.2 1 12 1 12 C1 12 3 11.8 5.8 10.5 C9.2 8.8 10.8 5.8 12 1Z"/></svg> Feedback IA';
+  document.getElementById('detail-modal').classList.remove('closing');document.getElementById('detail-modal').classList.add('open');
 }
 
-function closeModal() { document.getElementById('detail-modal').classList.remove('open'); currentModalId = null; }
+function closeOverlay(id, after) {
+  const el = document.getElementById(id);
+  if (!el) { if (after) after(); return; }
+  if (!el.classList.contains('open')) { el.classList.remove('closing'); if (after) after(); return; }
+  el.classList.add('closing');
+  let done = false;
+  const finish = () => {
+    if (done) return; done = true;
+    el.removeEventListener('animationend', onEnd);
+    clearTimeout(tmr);
+    el.classList.remove('open', 'closing');
+    if (after) after();
+  };
+  const onEnd = (e) => { if (e.target === el) finish(); };
+  el.addEventListener('animationend', onEnd);
+  const tmr = setTimeout(finish, 320);
+}
+window.closeOverlay = closeOverlay;
+function closeModal() { currentModalId = null; closeOverlay('detail-modal'); }
 document.getElementById('detail-modal').addEventListener('click', e => { if (e.target === document.getElementById('detail-modal')) closeModal(); });
 
 async function deleteTrade(id) {
@@ -4145,11 +4438,18 @@ function renderStrategies() {
 }
 
 /* ==== Ajustes móvil: editores de clave y sincronización ==== */
+function refreshVoicePillM(){
+  const pill=document.getElementById('voice-key-pill-m'); if(!pill) return;
+  const has=!!localStorage.getItem('voice_api_key');
+  pill.textContent = has ? 'Configurado' : 'Sin clave';
+  pill.className = has ? 'mset-pill ok' : 'mset-pill warn';
+}
+window.refreshVoicePillM = refreshVoicePillM;
+try { refreshVoicePillM(); } catch(e) {}
 function toggleKeyEditor(which) {
-  const id = which === 'ai' ? 'ai-editor-m' : 'news-editor-m';
-  const other = which === 'ai' ? 'news-editor-m' : 'ai-editor-m';
-  const el = document.getElementById(id), o = document.getElementById(other);
-  if (o) o.style.display = 'none';
+  const id = which + '-editor-m';
+  const el = document.getElementById(id);
+  document.querySelectorAll('.mset-editor').forEach(function(o){ if (o.id !== id) o.style.display = 'none'; });
   if (el) { el.style.display = el.style.display === 'none' ? 'block' : 'none'; if (el.style.display === 'block') { const inp = el.querySelector('input'); if (inp) inp.focus(); } }
 }
 function saveApiKeyM() {
@@ -4170,20 +4470,20 @@ function clearApiKeyM() {
 function saveNewsApiKeyM() {
   const val = document.getElementById('news-api-key-m').value.trim();
   if (!val) { showToast('Introduce una clave de API'); return; }
-  localStorage.setItem('marketauxApiKey', val);
+  localStorage.setItem('gnewsApiKey', val);
   document.getElementById('news-api-key-m').value = '';
   document.getElementById('news-editor-m').style.display = 'none';
   refreshNewsApiKeyStatus();
-  showToast('✅ Clave de Marketaux guardada');
+  showToast('✅ Clave de GNews guardada');
 }
 function clearNewsApiKeyM() {
-  localStorage.removeItem('marketauxApiKey');
+  localStorage.removeItem('gnewsApiKey');
   document.getElementById('news-editor-m').style.display = 'none';
   refreshNewsApiKeyStatus();
   showToast('Clave eliminada');
 }
 function syncMobileKeyRow(which) {
-  const on = which === 'ai' ? !!localStorage.getItem('geminiApiKey') : !!localStorage.getItem('marketauxApiKey');
+  const on = which === 'ai' ? !!localStorage.getItem('geminiApiKey') : !!localStorage.getItem('gnewsApiKey');
   const pill = document.getElementById(which === 'ai' ? 'ai-key-pill-m' : 'news-key-pill-m');
   if (pill) { pill.textContent = on ? 'Activa' : 'Sin clave'; pill.classList.toggle('ok', on); pill.classList.toggle('warn', !on); }
 }
@@ -4202,10 +4502,10 @@ function openStratModal(id = null) {
     const s = strategies.find(x => x.id === id);
     if (s) { document.getElementById('sm-title').textContent = 'Editar estrategia'; document.getElementById('sm-name').value = s.name; document.getElementById('sm-context').value = s.context || ''; tempRules = [...s.rules]; renderRulesList(); document.getElementById('sm-delete-btn').style.display = 'inline-flex'; }
   } else document.getElementById('sm-title').textContent = 'Nueva estrategia';
-  document.getElementById('strat-modal').classList.add('open');
+  document.getElementById('strat-modal').classList.remove('closing');document.getElementById('strat-modal').classList.add('open');
 }
 
-function closeStratModal() { document.getElementById('strat-modal').classList.remove('open'); editingStratId = null; tempRules = []; }
+function closeStratModal() { editingStratId = null; tempRules = []; closeOverlay('strat-modal'); }
 document.getElementById('strat-modal').addEventListener('click', e => { if (e.target === document.getElementById('strat-modal')) closeStratModal(); });
 document.getElementById('wr-modal').addEventListener('click', e => { if (e.target === document.getElementById('wr-modal')) closeWeeklyReview(); });
 document.getElementById('wr-edit-modal').addEventListener('click', e => { if (e.target === document.getElementById('wr-edit-modal')) closeWeeklyEdit(); });
@@ -4224,11 +4524,12 @@ function ruleCategory(r) { return typeof r === 'string' ? 'Entry Criteria' : (r.
 
 function renderRulesList() {
   const cats = ['Market Context', 'Entry Criteria', 'Exit Criteria'];
+  const clsMap = { 'Market Context': 'cat-context', 'Entry Criteria': 'cat-entry', 'Exit Criteria': 'cat-exit' };
   document.getElementById('sm-rules-list').innerHTML = cats.map(cat => {
     const rules = tempRules.map((r,i) => ({r,i})).filter(x => ruleCategory(x.r) === cat);
     if (!rules.length) return '';
-    return `<div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin:10px 0 6px;">${cat}</div>` +
-      rules.map(x => `<div class="rule-row"><span>${ruleText(x.r)}</span><button onclick="removeRule(${x.i})">✕</button></div>`).join('');
+    return `<div class="sm-grouplbl">${cat}</div>` +
+      rules.map(x => `<div class="rule-row ${clsMap[cat]}"><span>${ruleText(x.r)}</span><button onclick="removeRule(${x.i})">✕</button></div>`).join('');
   }).join('');
 }
 
@@ -4671,10 +4972,10 @@ window.editPayoutGoal = editPayoutGoal;
 window.toggleImprovementCard = toggleImprovementCard;
 window.deletePayout = deletePayout;
 
-// ── Noticias (Marketaux + DeepSeek) ──
+// ── Noticias (GNews + DeepSeek) ──
 
 function refreshNewsApiKeyStatus() {
-  const key = localStorage.getItem('marketauxApiKey');
+  const key = localStorage.getItem('gnewsApiKey');
   const status = document.getElementById('news-key-status');
   const input = document.getElementById('news-api-key');
   const dot = document.getElementById('news-key-dot');
@@ -4682,11 +4983,11 @@ function refreshNewsApiKeyStatus() {
   if (key) {
     input.value = '';
     input.placeholder = '••••••••' + key.slice(-4);
-    status.textContent = 'Clave activa · guardada en este navegador.';
+    status.textContent = 'Fuente: GDELT · tiempo real, gratis · no requiere clave.';
     if (dot) dot.classList.add('on');
   } else {
-    input.placeholder = 'Tu token de Marketaux...';
-    status.textContent = 'Sin clave · gratis en app.marketaux.com/register (100/día).';
+    input.placeholder = 'No requiere clave (GDELT)';
+    status.textContent = 'Fuente: GDELT · tiempo real, gratis · no requiere clave.';
     if (dot) dot.classList.remove('on');
   }
   if (typeof syncMobileKeyRow === 'function') syncMobileKeyRow('news');
@@ -4695,13 +4996,13 @@ window.refreshNewsApiKeyStatus = refreshNewsApiKeyStatus;
 function saveNewsApiKey() {
   const val = document.getElementById('news-api-key').value.trim();
   if (!val) return;
-  localStorage.setItem('marketauxApiKey', val);
+  localStorage.setItem('gnewsApiKey', val);
   refreshNewsApiKeyStatus();
-  showToast('✅ Clave de Marketaux guardada');
+  showToast('✅ Clave de GNews guardada');
 }
 
 function clearNewsApiKey() {
-  localStorage.removeItem('marketauxApiKey');
+  localStorage.removeItem('gnewsApiKey');
   refreshNewsApiKeyStatus();
   showToast('Clave eliminada');
 }
@@ -4709,28 +5010,108 @@ function clearNewsApiKey() {
 function initNewsPage() {
   const wsel = document.getElementById('news-window-select');
   if (wsel) wsel.value = localStorage.getItem('newsWindowDays') || '7';
-  const key = localStorage.getItem('marketauxApiKey');
   const noKey = document.getElementById('news-no-key');
   const empty = document.getElementById('news-empty');
   const result = document.getElementById('news-result');
-  if (!key) {
-    if (noKey) { noKey.style.display = 'block'; }
-    if (empty) { empty.style.display = 'none'; }
-    if (result) { result.style.display = 'none'; }
-  } else {
-    if (noKey) { noKey.style.display = 'none'; }
+  if (noKey) noKey.style.display = 'none';
+  // GDELT no requiere clave: si aún no hay resultado, mostrar el estado inicial
+  if (result && result.style.display !== 'block' && empty) empty.style.display = 'block';
+}
+
+function ndEsc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function ndCap(s){ s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
+// GDELT vía JSONP (evita CORS: se carga como <script>)
+function gdeltJsonp(baseUrl) {
+  return new Promise(function (resolve, reject) {
+    const cb = 'gdelt_cb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const s = document.createElement('script');
+    let done = false;
+    const cleanup = function () {
+      done = true;
+      try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+      clearTimeout(tmr);
+    };
+    window[cb] = function (data) { if (done) return; cleanup(); resolve(data); };
+    const tmr = setTimeout(function () { if (done) return; cleanup(); reject(new Error('Tiempo de espera agotado')); }, 12000);
+    s.onerror = function () { if (done) return; cleanup(); reject(new Error('No se pudo contactar con GDELT')); };
+    s.src = baseUrl + '&format=jsonp&callback=' + cb;
+    document.head.appendChild(s);
+  });
+}
+
+function buildNewsEditorial(summary){
+  const lines = String(summary || '').split('\n').map(l => l.trim());
+  const secOf = (l) => {
+    if (/^(🎯|📋)/.test(l) || /LECTURA DIRECCIONAL/i.test(l)) return 'dir';
+    if (/^🔥/.test(l) || /GEOPOL[IÍ]TICA/i.test(l)) return 'crit';
+    if (/^🟢/.test(l) || /FACTORES ALCISTAS/i.test(l)) return 'bull';
+    if (/^🔴/.test(l) || /FACTORES BAJISTAS/i.test(l)) return 'bear';
+    if (/^⚖️?/.test(l) || /SESGO GENERAL/i.test(l)) return 'gen';
+    if (/^👁/.test(l) || /A VIGILAR|PUNTOS CLAVE/i.test(l)) return 'watch';
+    return null;
+  };
+  let section = 'dir', sesgo = '';
+  const dir = [], crit = [], bull = [], bear = [], gen = [], watch = [];
+  for (const l of lines){
+    if (!l) continue;
+    const h = secOf(l);
+    // línea que es SOLO encabezado (icono + título corto, sin contenido útil)
+    if (h && (l.length < 40 || /^(🎯|🔥|🟢|🔴|⚖️?|👁|📋)/.test(l))){ section = h; continue; }
+    if (/^SESGO\s*:/i.test(l)){ sesgo = l; continue; }
+    if (l.startsWith('⚠')){ crit.push(l.replace(/^⚠\s*/, '')); continue; }
+    if (l.startsWith('▲')){ bull.push(l.replace(/^▲\s*/, '')); continue; }
+    if (l.startsWith('▼')){ bear.push(l.replace(/^▼\s*/, '')); continue; }
+    if (l.startsWith('→')){ watch.push(l.replace(/^→\s*/, '')); continue; }
+    if (section === 'gen') gen.push(l);
+    else if (section === 'crit') crit.push(l);
+    else dir.push(l);
   }
+  // Sesgo -> pastilla
+  let biasCls = 'neutral', biasTxt = 'Neutro';
+  const mm = /SESGO\s*:\s*([A-Za-zÁÉÍÓÚáéíóú]+)/i.exec(sesgo);
+  const conf = /CONFIANZA\s*:\s*([A-Za-zÁÉÍÓÚáéíóú]+)/i.exec(sesgo);
+  if (mm){
+    const s = mm[1].toUpperCase();
+    if (s.indexOf('ALC') === 0){ biasCls = 'up'; biasTxt = 'Alcista'; }
+    else if (s.indexOf('BAJ') === 0){ biasCls = 'down'; biasTxt = 'Bajista'; }
+  }
+  // Titular = primera frase de la lectura direccional
+  let headline = '', body = [];
+  const dirFull = dir.join(' ').trim();
+  if (dirFull){
+    const dot = dirFull.indexOf('. ');
+    if (dot > 24 && dot < 170){ headline = dirFull.slice(0, dot + 1); const rest = dirFull.slice(dot + 1).trim(); if (rest) body.push(rest); }
+    else headline = dirFull.length <= 170 ? dirFull : dirFull.slice(0, 167) + '…';
+  }
+  if (!headline) headline = 'Resumen del mercado de crudo';
+  gen.forEach(g => body.push(g));
+
+  let html = '<div class="nd-kicker">✦ Resumen del día · Generado por IA</div>';
+  html += `<h1 class="nd-h">${ndEsc(headline)}</h1>`;
+  html += `<div class="nd-bias ${biasCls}"><span class="nd-tri">${biasCls === 'up' ? '▲' : biasCls === 'down' ? '▼' : '■'}</span>Sesgo · ${biasTxt}${conf ? ' · Confianza ' + ndCap(conf[1].toLowerCase()) : ''}</div>`;
+  if (body.length){
+    html += '<div class="nd-body">' + body.map((p, i) => `<p${i === 0 ? ' class="nd-drop"' : ''}>${ndEsc(p)}</p>`).join('') + '</div>';
+  }
+  const critReal = crit.filter(c => !/sin desarrollos cr[ií]ticos/i.test(c));
+  if (critReal.length){
+    html += '<div class="nd-crit"><h4>Geopolítica crítica</h4><ul>' + critReal.map(c => `<li>${ndEsc(c)}</li>`).join('') + '</ul></div>';
+  }
+  if (bull.length || bear.length){
+    html += '<div class="nd-cols">';
+    if (bull.length) html += '<div class="nd-fact up"><h4>Factores alcistas</h4><ul>' + bull.map(x => `<li>${ndEsc(x)}</li>`).join('') + '</ul></div>';
+    if (bear.length) html += '<div class="nd-fact down"><h4>Factores bajistas</h4><ul>' + bear.map(x => `<li>${ndEsc(x)}</li>`).join('') + '</ul></div>';
+    html += '</div>';
+  }
+  if (watch.length){
+    html += '<div class="nd-watch"><b>A vigilar —</b> ' + watch.map(w => ndEsc(w)).join(' · ') + '</div>';
+  }
+  return html;
 }
 
 async function fetchAndSummarizeNews() {
-  const marketauxKey = localStorage.getItem('marketauxApiKey');
   const aiKey = localStorage.getItem('geminiApiKey');
 
-  if (!marketauxKey) {
-    showToast('⚠️ Configura tu clave de Marketaux en Ajustes → Noticias');
-    goTo('settings', null);
-    return;
-  }
   if (!aiKey) {
     showToast('⚠️ Configura tu clave de OpenRouter en Ajustes → Asistente IA');
     return;
@@ -4752,41 +5133,56 @@ async function fetchAndSummarizeNews() {
   try {
     // 1. Ventana temporal (días hacia atrás)
     const days = parseInt(localStorage.getItem('newsWindowDays') || '7', 10);
-    const after = new Date(Date.now() - days * 86400000).toISOString().slice(0, 19);
+    // Fuente: GDELT DOC 2.0 — tiempo real (~15 min), gratis, sin clave.
+    const query = '("crude oil" OR "oil prices" OR "oil price" OR OPEC OR "Brent crude" OR WTI OR "oil market" OR "Strait of Hormuz" OR "oil supply" OR "oil demand")';
+    const gdeltUrl = 'https://api.gdeltproject.org/api/v2/doc/doc'
+      + '?query=' + encodeURIComponent(query)
+      + '&mode=artlist&sort=datedesc&maxrecords=75'
+      + '&timespan=' + encodeURIComponent(days + 'd');
 
-    // 2. Tres consultas en paralelo: geopolítica, fundamentales y macro
-    const QUERIES = [
-      { tag: 'GEO',   q: 'Hormuz OR Iran OR Tehran OR Trump OR sanctions OR tanker OR "Red Sea" OR Houthi OR strike' },
-      { tag: 'CRUDO', q: 'crude oil OR WTI OR Brent OR OPEC OR "oil inventories" OR EIA OR "oil production"' },
-      { tag: 'MACRO', q: '"oil demand" OR "oil supply" OR "oil price" OR refinery OR "energy market"' }
-    ];
+    let raw = [], fetchErr = '';
+    let d = null;
+    // 1) Intento con fetch (GDELT expone CORS *). 2) Respaldo JSONP si falla.
+    try {
+      const r = await fetch(gdeltUrl + '&format=json');
+      const txt = await r.text();
+      try { d = JSON.parse(txt); } catch (_) { d = null; }
+    } catch (e) { d = null; }
+    if (!d || !(d.articles && d.articles.length)) {
+      try { d = await gdeltJsonp(gdeltUrl); } catch (e) { fetchErr = (e && e.message) || 'Error de red'; }
+    }
+    raw = (d && d.articles) || [];
 
-    const results = await Promise.all(QUERIES.map(async function (Q) {
-      const url = 'https://api.marketaux.com/v1/news/all'
-        + '?search=' + encodeURIComponent(Q.q)
-        + '&language=en&limit=20&sort=published_at'
-        + '&published_after=' + encodeURIComponent(after)
-        + '&api_token=' + marketauxKey;
-      try {
-        const r = await fetch(url);
-        if (!r.ok) return [];
-        const d = await r.json();
-        return (d.data || []).map(function (a) { a._tag = Q.tag; return a; });
-      } catch (e) { return []; }
-    }));
+    const cleanSource = function (dom) {
+      if (!dom) return 'Fuente';
+      const base = String(dom).replace(/^www\./, '').split('.')[0].replace(/-/g, ' ');
+      return base.charAt(0).toUpperCase() + base.slice(1);
+    };
+    const parseSeen = function (s) {
+      const m = /^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/.exec(String(s || ''));
+      return m ? (m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5] + ':' + m[6] + 'Z') : null;
+    };
 
-    // 3. Fusionar y quitar duplicados por URL o titular
+    // Fusionar y quitar duplicados por URL o titular
     const seen = new Set();
     let articles = [];
-    results.flat().forEach(function (a) {
-      const k = (a.url || a.title || '').toLowerCase().trim();
+    raw.forEach(function (a) {
+      const url = a.url || '';
+      const k = (url || a.title || '').toLowerCase().trim();
       if (!k || seen.has(k)) return;
       seen.add(k);
-      articles.push(a);
+      articles.push({
+        title: a.title,
+        source: cleanSource(a.domain),
+        published_at: parseSeen(a.seendate),
+        url: url,
+        description: ''
+      });
     });
 
     if (!articles.length) {
-      throw new Error('No se encontraron noticias de crudo en los últimos ' + days + ' días.');
+      if (fetchErr) throw new Error('No se pudieron obtener noticias (' + fetchErr + '). Reintenta en unos segundos; si persiste, prueba a ampliar la ventana.');
+      throw new Error('No se encontraron noticias de crudo en los últimos ' + days + ' días. Prueba a ampliar la ventana (14 o 30 días).');
     }
 
     // 4. Puntuar por relevancia geopolítica y ordenar
@@ -4896,63 +5292,32 @@ ${articlesList}`;
 
     // 4. Mostrar resultado
     hideLoading();
-    document.getElementById('news-summary').innerHTML = summary
-      .split('\n')
-      .map(line => {
-        const t = line.trim();
-        if (!t) return '';
-        // Encabezados con pill
-        if (t.startsWith('📋') || t.startsWith('🎯'))
-          return `<div class="news-section-pill accent">${t}</div>`;
-        if (t.startsWith('⚖️'))
-          return `<div class="news-section-pill accent">${t}</div>`;
-        if (t.startsWith('🔥'))
-          return `<div class="news-section-pill hot">${t}</div>`;
-        if (t.startsWith('SESGO:'))
-          return `<div class="news-bias">${t}</div>`;
-        if (t.startsWith('⚠'))
-          return `<div class="news-warn">${t}</div>`;
-        if (t.startsWith('👁'))
-          return `<div class="news-section-pill vigilar">${t}</div>`;
-        if (t.startsWith('🟢'))
-          return `<div class="news-section-pill green">${t}</div>`;
-        if (t.startsWith('🔴'))
-          return `<div class="news-section-pill red">${t}</div>`;
-        // Puntos alcistas ▲
-        if (t.startsWith('▲'))
-          return `<div style="color:var(--green);margin:4px 0 4px 4px;line-height:1.6;">${t}</div>`;
-        // Puntos bajistas ▼
-        if (t.startsWith('▼'))
-          return `<div style="color:var(--red);margin:4px 0 4px 4px;line-height:1.6;">${t}</div>`;
-        // Puntos clave →
-        if (t.startsWith('→'))
-          return `<div style="color:#e8e8e8;margin:4px 0 4px 4px;line-height:1.6;">${t}</div>`;
-        // Texto normal
-        return `<div style="margin:3px 0;line-height:1.7;">${t}</div>`;
-      })
-      .join('');
+    document.getElementById('news-summary').innerHTML = buildNewsEditorial(summary);
     const ts = new Date().toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
-    document.getElementById('news-timestamp').textContent = 'Actualizado: ' + ts;
+    document.getElementById('news-timestamp').textContent = 'Actualizado ' + ts;
     document.getElementById('news-last-update').textContent = 'Última actualización: ' + ts;
+    const _fecha = new Date().toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    document.getElementById('nd-mast-sub').textContent =
+      `Edición · ${ndCap(_fecha)} · ${articles.length} fuentes · Ventana ${days} días`;
 
     // Contador de artículos
     document.getElementById('news-articles-count').textContent =
       `${articles.length} fuentes · ${days}d` + (hotCount ? ` · ${hotCount} críticas` : '');
 
-    // Renderizar tarjetas de artículos
+    // Renderizar breves de periódico
     const container = document.getElementById('news-articles');
     container.innerHTML = articles.map(a => {
       const date = a.published_at ? new Date(a.published_at).toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
       const hot = a._score >= 8;
-      const tags = (a._tags || []).slice(0, 3).map(t =>
-        `<span class="art-tag${/HORMUZ|IRÁN|TRUMP/.test(t) ? ' crit' : ''}">${t}</span>`).join('');
-      return `<div class="news-article-card${hot ? ' hot' : ''}">
-        <div class="art-title">${a.title || 'Sin título'}</div>
-        <div class="art-meta">
-          <span class="art-source">${a.source || ''}</span>
+      const tags = (a._tags || []).slice(0, 3).map(t => `<span class="nd-tag">${ndEsc(t)}</span>`).join('');
+      return `<div class="nd-brief${hot ? ' hot' : ''}">
+        ${hot ? '<span class="nd-flag">Última hora</span>' : ''}
+        <h3>${ndEsc(a.title || 'Sin título')}</h3>
+        <div class="nd-byline">
+          <span class="nd-src">${ndEsc(a.source || '')}</span>
           <span>${date}</span>
           ${tags}
-          ${a.url ? `<a href="${a.url}" target="_blank" class="art-link">↗ Ver original</a>` : ''}
+          ${a.url ? `<a href="${a.url}" target="_blank">↗ Original</a>` : ''}
         </div>
       </div>`;
     }).join('');
@@ -4997,6 +5362,32 @@ function closeMobileMenu() {
 
 window.toggleMobileMenu = toggleMobileMenu;
 window.closeMobileMenu = closeMobileMenu;
+
+// ── Barra de navegación móvil: compacta al deslizar hacia abajo (estilo Revolut) ──
+(function initMobileNavAutoHide(){
+  const nav = document.getElementById('mobile-nav');
+  const content = document.querySelector('.content');
+  if (!nav) return;
+  let ticking = false;
+  const curY = () => {
+    const cy = content ? content.scrollTop : 0;
+    return cy > 0 ? cy : (window.scrollY || document.documentElement.scrollTop || 0);
+  };
+  const onScroll = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = curY();
+      if (window.innerWidth > 768) { nav.classList.remove('compact'); ticking = false; return; }
+      // Barra completa solo arriba del todo; en cualquier otra posición, compacta
+      if (y <= 12) nav.classList.remove('compact');
+      else nav.classList.add('compact');
+      ticking = false;
+    });
+  };
+  if (content) content.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
 
 // ── Weekly Review ──
 let wrCategories = [];
@@ -5076,8 +5467,11 @@ function renderWRBanner() {
   const pending = total - checked;
   slot.innerHTML = `
     <div class="wr-banner">
-      <span class="wr-banner-dot"></span>
-      <span class="wr-banner-text">Revisión semanal pendiente · ${pending} punto${pending===1?'':'s'} sin marcar</span>
+      <span class="wr-banner-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5" width="16" height="16" rx="2.5"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M9 15l2 2 4-4"/></svg></span>
+      <span class="wr-banner-body">
+        <span class="wr-banner-title">Revisión semanal pendiente</span>
+        <span class="wr-banner-sub">${pending} punto${pending===1?'':'s'} sin marcar</span>
+      </span>
       <button class="wr-banner-btn" onclick="openWeeklyReview()">Revisar</button>
       <button class="wr-banner-close" onclick="dismissWRBanner()" title="Cerrar por hoy">✕</button>
     </div>`;
@@ -5088,8 +5482,8 @@ function dismissWRBanner() {
   renderWRBanner();
 }
 
-function openWeeklyReview() { renderWRModalBody(); document.getElementById('wr-modal').classList.add('open'); }
-function closeWeeklyReview() { document.getElementById('wr-modal').classList.remove('open'); }
+function openWeeklyReview() { renderWRModalBody(); document.getElementById('wr-modal').classList.remove('closing');document.getElementById('wr-modal').classList.add('open'); }
+function closeWeeklyReview() { closeOverlay('wr-modal'); }
 
 function renderWRModalBody() {
   const body = document.getElementById('wr-modal-body');
@@ -5117,8 +5511,8 @@ function renderWRModalBody() {
 }
 
 function toggleWRNote(noteId) { wrChecked[noteId] = !wrChecked[noteId]; saveWRChecked(); renderWRModalBody(); renderWRBanner(); }
-function openWeeklyEdit() { renderWREdit(); document.getElementById('wr-edit-modal').classList.add('open'); }
-function closeWeeklyEdit() { document.getElementById('wr-edit-modal').classList.remove('open'); }
+function openWeeklyEdit() { renderWREdit(); document.getElementById('wr-edit-modal').classList.remove('closing');document.getElementById('wr-edit-modal').classList.add('open'); }
+function closeWeeklyEdit() { closeOverlay('wr-edit-modal'); }
 
 function renderWREdit() {
   const body = document.getElementById('wr-edit-body');
@@ -5996,6 +6390,7 @@ function saveVoiceConfig() {
     return;
   }
   localStorage.setItem('voice_api_key', apiKey);
+  try { refreshVoicePillM(); } catch(e) {}
   localStorage.setItem('voice_selected', voiceName);
   voiceState.apiKey = apiKey;
   voiceState.selectedVoice = voiceState.availableVoices.find(v => v.name === voiceName) || null;
@@ -6311,7 +6706,7 @@ function voiceToggleMic() {
 
 // ── Historial de conversación (últimas frases) ──
 const upHistory=[];
-const UP_HISTORY_MAX=3;
+const UP_HISTORY_MAX=200;
 
 function upAddHistory(who, text){
   const last = upHistory[upHistory.length-1];
@@ -6345,6 +6740,7 @@ function upRenderHistory(){
              '<span class="voice-histbar-text'+(isUp?' up':'')+'">'+safe+'</span>'+
            '</div>';
   }).join('');
+  if(bar){ try { bar.scrollTop = bar.scrollHeight; } catch(e){} }
 }
 
 function voiceShowTranscript(who, text) {
@@ -6373,6 +6769,44 @@ function voiceStopWaves() {
   if (voiceState.waveInterval) { clearInterval(voiceState.waveInterval); voiceState.waveInterval = null; }
   document.querySelectorAll('.voice-wave').forEach(w => { w.style.height = '20%'; });
 }
+
+// Modo texto: escribir al orbe y recibir respuesta SOLO por texto (sin voz)
+async function voiceSendText() {
+  const inp = document.getElementById('voice-text-input');
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  if (!voiceState.apiKey && typeof voiceLoadConfig === 'function') voiceLoadConfig();
+  if (!voiceState.apiKey) { voiceShowError('Configura tu API Key de Anthropic en el engranaje ⚙ para poder chatear.'); return; }
+  if (voiceState.isProcessing) return;
+  if (voiceIsBudgetExhausted()) { voiceShowError('Saldo agotado. Recarga en console.anthropic.com y usa "↻ Resetear gasto".'); return; }
+
+  inp.value = '';
+  // En modo texto no escuchamos ni hablamos
+  if (typeof voiceStopListening === 'function') voiceStopListening();
+  if (window.speechSynthesis) speechSynthesis.cancel();
+
+  voiceShowTranscript('user', text);
+  voiceState.isProcessing = true;
+  voiceSetState('processing');
+  voiceState.conversation.push({ role: 'user', content: text });
+  if (voiceState.conversation.length > 12) voiceState.conversation = voiceState.conversation.slice(-12);
+  try {
+    const response = await voiceCallClaude();
+    voiceState.conversation.push({ role: 'assistant', content: response });
+    const alertMsg = voiceCheckBudgetAlerts();
+    const finalResponse = alertMsg ? (alertMsg + ' ' + response) : response;
+    voiceShowTranscript('claude', finalResponse); // solo texto, sin voz
+    voiceSetState('ready');
+  } catch (e) {
+    console.error('Claude error (texto):', e);
+    voiceShowError('Error: ' + e.message);
+    voiceSetState('ready');
+  } finally {
+    voiceState.isProcessing = false;
+  }
+}
+window.voiceSendText = voiceSendText;
 
 async function voiceProcessSpeech(text) {
   if (voiceState.isProcessing) return;
@@ -6611,9 +7045,10 @@ window.voiceResetConsumed = voiceResetConsumed;
 <div class="modal-overlay" id="wr-modal">
   <div class="wr-modal-box">
     <div class="wr-modal-header">
-      <div class="wr-modal-title">📋 Revisión semanal</div>
+      <div class="wr-modal-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="5.5"/><line x1="16" y1="2.5" x2="16" y2="5.5"/></svg>Revisión semanal</div>
       <button class="modal-close" onclick="closeWeeklyReview()">✕</button>
     </div>
+    <div class="wr-modal-accent"></div>
     <div class="wr-modal-body" id="wr-modal-body"></div>
     <div class="wr-modal-footer">
       <div class="wr-progress-label"><span>Aplicados esta semana</span><span id="wr-score">0 / 0</span></div>
@@ -6626,10 +7061,11 @@ window.voiceResetConsumed = voiceResetConsumed;
 <!-- Weekly Review edit modal -->
 <div class="modal-overlay" id="wr-edit-modal">
   <div class="wr-edit-modal-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <span style="font-family:var(--mono);font-size:14px;font-weight:700;">Editar notas semanales</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <span style="font-family:var(--mono);font-size:15px;font-weight:700;display:flex;align-items:center;gap:9px;"><svg class="wr-edit-title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2.5" x2="8" y2="5.5"/><line x1="16" y1="2.5" x2="16" y2="5.5"/></svg>Editar notas semanales</span>
       <button class="modal-close" onclick="closeWeeklyEdit()">✕</button>
     </div>
+    <div class="wr-edit-accent"></div>
     <div id="wr-edit-body"></div>
     <div style="margin-top:6px;">
       <div style="font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted2);margin-bottom:8px;">Nueva categoría</div>
