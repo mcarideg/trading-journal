@@ -1,4 +1,4 @@
-// sw-v4.js — sin caché (network-only). Cada carga va directo a red.
+// sw.js — sin caché (network-only). Cada carga va directo a red.
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.keys()
@@ -14,6 +14,17 @@ self.addEventListener('activate', (e) => {
       .then(() => self.clients.claim())
       .then(() => self.clients.matchAll({ type: 'window' }))
       .then(clients => { clients.forEach(client => client.navigate(client.url)); })
+  );
+});
+
+// Al tocar una notificación (avisos de festivos): abre o enfoca la app
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      return self.clients.openWindow(self.registration.scope);
+    })
   );
 });
 
